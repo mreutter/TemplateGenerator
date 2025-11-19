@@ -1,0 +1,8 @@
+﻿using $logic#.DTO;
+
+namespace $logic#.Service;
+
+public interface I$modelName#Service
+{
+$CRUD#
+}

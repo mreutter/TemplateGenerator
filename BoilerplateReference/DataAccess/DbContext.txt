@@ -1,0 +1,17 @@
+﻿using Microsoft.EntityFrameworkCore;
+using $dataAccess#.Model;
+
+namespace $dataAccess#;
+
+public class $dbContextName# : DbContext
+{
+    /// <summary>
+    /// {summary}
+    /// </summary>
+    /// <param name="{paramName}">{paramDescription}</param>
+    /// <returns>{returnDescription}</returns>
+    public $dbContextName#(DbContextOptions<$dbContextName#> options) :
+        base(options)
+    { }
+$dbSets#
+}

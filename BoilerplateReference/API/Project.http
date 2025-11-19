@@ -1,0 +1,6 @@
+@$api#_HostAddress = http://localhost:5037
+
+GET {{$api#_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

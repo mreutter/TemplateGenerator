@@ -1,0 +1,9 @@
+﻿using $logic#.DTO;
+
+namespace $logic#.Service;
+
+public interface IAuthService
+{
+    //Comment
+    public LoginResponseDto? Verify$identifier#(LoginRequestDto loginReq);
+}

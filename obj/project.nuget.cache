@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "lUO/U+sgjvk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\BackendTemplateCreator.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\reuttem1\\.nuget\\packages\\spectre.console\\0.53.0\\spectre.console.0.53.0.nupkg.sha512"
+  ],
+  "logs": []
+}

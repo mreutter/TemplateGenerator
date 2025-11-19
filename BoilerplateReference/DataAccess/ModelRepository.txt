@@ -1,0 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+using $dataAccess#.Model;
+
+namespace $dataAccess#.Repository;
+
+public class $modelName#Repository : I$modelName#Repository
+{
+    private readonly $dbContextName# _db;
+
+    /// <summary>
+    /// Sets the DbContext reference.
+    /// </summary>
+    /// <param name="db">The database context to be used for data operations.</param>
+    public $modelName#Repository($dbContextName# db)
+    {
+        _db = db;
+    }$CRUD#
+}

@@ -1,0 +1,8 @@
+﻿using $dataAccess#.Model;
+
+namespace $dataAccess#.Repository;
+
+public interface I$modelName#Repository
+{
+$CRUD#
+}

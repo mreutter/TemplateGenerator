@@ -1,0 +1,28 @@
+{
+    "ProjectName": "TeamManager",
+
+    //Partition Names
+    "APIPartitionName": "WebAPI",
+    "LogicPartitionName": "Services",
+    "DataAccessPartitionName": "DataAccess",
+    "UseRootPrefix": true,
+
+    //Folder Names
+    "DTOFolderName": "DTO",
+    "ModelFolderName": "Model",
+    "RepositoryFolderName": "Repository",
+
+    //Suffixes
+    "DtoSuffix": "Dto",
+    "ModelSuffix": "",
+    "ServiceSuffix": "Service",
+    "RepositorySuffix": "Repository",
+    "DbSetSuffix": "s",
+
+    //Misc. Names
+    "apiURLExtension": "api",
+    "DbContextName": "DBContext",
+    "DataDependencyPrefix": "Data",
+    "LogicDependencyPrefix": "Logic",
+    "DependencyInjectionSuffix": "Dependency"
+}

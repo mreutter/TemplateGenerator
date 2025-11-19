@@ -1,0 +1,19 @@
+﻿using $dataAccess#;
+using $logic#.Service;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace $logic#;
+
+public static class $logicDependencyInjectName#
+{
+    /// <summary>
+    /// The Depencdency Injection for the Service layer.
+    /// </summary>
+    public static void AddServiceLayer(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddDataAccessLayer(config);
+
+$serviceInjections#
+    }
+}

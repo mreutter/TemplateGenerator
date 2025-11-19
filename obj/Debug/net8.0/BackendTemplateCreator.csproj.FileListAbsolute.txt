@@ -1,0 +1,17 @@
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\BackendTemplateCreator.exe
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\BackendTemplateCreator.deps.json
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\BackendTemplateCreator.runtimeconfig.json
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\BackendTemplateCreator.dll
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\BackendTemplateCreator.pdb
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.AssemblyInfoInputs.cache
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.AssemblyInfo.cs
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.csproj.CoreCompileInputs.cache
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.dll
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\refint\BackendTemplateCreator.dll
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.pdb
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.genruntimeconfig.cache
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\ref\BackendTemplateCreator.dll
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.csproj.AssemblyReference.cache
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\Spectre.Console.dll
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendT.19705A4C.Up2Date

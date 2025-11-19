@@ -1,0 +1,22 @@
+﻿using $dataAccess#.Repository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
+namespace $dataAccess#;
+
+public static class $dataDependencyInjectName#
+{
+    /// <summary>
+    /// The Dependency Injection for the data access layer.
+    /// </summary>
+    public static void AddDataAccessLayer(this IServiceCollection services, IConfiguration config)
+    {
+        string connectionString = config.GetConnectionString("DefaultConnection");
+
+        services.AddDbContext<$dbContextName#>(options =>
+            options.UseMySql(connectionString,
+                             ServerVersion.AutoDetect(connectionString)));
+$repoInjections#
+    }
+}

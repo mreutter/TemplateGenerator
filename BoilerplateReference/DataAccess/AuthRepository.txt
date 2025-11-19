@@ -1,0 +1,23 @@
+﻿using $dataAccess#.Model;
+
+namespace $dataAccess#.Repository;
+
+public class AuthRepository : IAuthRepository
+{
+    private readonly $dbContextName# _db;
+    
+    /// <summary>
+    /// Sets the DbContext reference.
+    /// </summary>
+    /// <param name="db">The database context to be used for data operations.</param>
+    public AuthRepository($dbContextName# db)
+    {
+        _db = db;
+    }
+
+    /// <inheritdoc />
+    public $authType#? Get$authType#By$identifer#(string $smallIdentifer#)
+    {
+        return _db.$dbSetName#.FirstOrDefault(u => u.$identifer# == $smallIdentifer#);
+    }
+}

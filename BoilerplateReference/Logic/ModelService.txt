@@ -1,0 +1,32 @@
+﻿using $dataAccess#.Model;
+using $dataAccess#.Repository;
+using $logic#.DTO;
+
+namespace $logic#.Service;
+
+public class $modelName#Service : I$modelName#Service
+{
+    private readonly I$modelName#Repository _$smallModelName#Repository;
+
+    public $modelName#Service(I$modelName#Repository $smallModelName#Repository)
+    {
+        _$smallModelName#Repository = $smallModelName#Repository;
+    }
+
+    private $modelName#Dto ToDto($modelName# $smallModelName#)
+    {
+        return new $modelName#Dto
+        {
+            //Conversion to Dto
+        };
+    }
+
+    private $modelName# ToModel($modelName#Dto $smallModelName#)
+    {
+        return new $modelName#
+        {
+            //Conversion to Model
+        };
+    }
+$CRUD#
+}

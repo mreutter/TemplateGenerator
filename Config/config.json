@@ -1,0 +1,28 @@
+{
+    "Directory": "C:\\Users\\reuttem1\\Desktop\\Templates",
+
+    "DbName": "",
+    "DbHost": "localhost",
+    "DbUser": "root",
+    "DbPassword": "Init1234",
+
+    "InferType": true,
+    "UseForeignKey": false,
+
+    "UseControllerName": true,
+
+    "UseAuthentification": true,
+    "UseAuthorisation": false,
+    "UseShared": false,
+    "UseAsync": false,
+
+    "CORSAllowIP": "",
+
+    "AuthType": "Person",
+    "AuthIdentifer": "Username",
+    "AuthDbSetName": "Persons",
+
+    "Key": "",
+    "Issuer": "https://my-api.com",
+    "Audience": "https://my-api.com"
+}

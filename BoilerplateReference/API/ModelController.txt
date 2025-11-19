@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using $logic#.DTO;
+using $logic#.Service;
+
+namespace $api#.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]$useAuthorisation#
+public class $modelName#Controller : ControllerBase
+{
+    private readonly I$modelName#Service _$smallModelName#Service;
+
+    /// <summary>
+    /// Constructor to enable the dependency injection of <see cref="$modelName#Service"/>.
+    /// </summary>
+    /// <param name="$smallModelName#Service">The reference to the $modelName#Service.</param>
+    public $modelName#Controller(I$modelName#Service $smallModelName#Service)
+    {
+        _$smallModelName#Service = $smallModelName#Service;
+    }$CRUD#
+}
