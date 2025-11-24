@@ -1,11 +1,11 @@
 {
-    "Directory": "C:\\Users\\reuttem1\\Desktop\\Templates",
+    "Directory": "C:/Users/reuttem1/Desktop/Templates/",
 
-    "DbName": "",
+    "DbName": "DbName",
     "DbHost": "localhost",
     "DbUser": "root",
     "DbPassword": "Init1234",
-
+  
     "InferType": true,
     "UseForeignKey": false,
 

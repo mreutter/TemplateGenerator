@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿/*using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class DataAccessGenerator
@@ -251,4 +251,4 @@ public class DataAccessGenerator
 
         return crud.ToString();
     }
-}
+}*/

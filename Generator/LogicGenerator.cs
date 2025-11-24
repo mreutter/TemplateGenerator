@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿/*using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class LogicGenerator
@@ -173,10 +173,10 @@ public class LogicGenerator
         );
     }
     public void GenerateAuthDto() {
-        /*[Required]
+        *//*[Required]
         [EmailAddress]
         [MaxLength(100)]
-        public string Email { get; set; }*/
+        public string Email { get; set; }*//*
 
         GeneratorHelper.StitchReplaceFile(
             _templateDirectory,
@@ -298,4 +298,4 @@ $"    bool Delete{modelName}(int id);\r\n");
 
         return crud.ToString();
     }
-}
+}*/

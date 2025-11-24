@@ -21,9 +21,9 @@ public class BackendGenerator
     public Names? names;
     public List<Table> tables = new();
 
-    private APIGenerator _apiGen;
+    /*private APIGenerator _apiGen;
     private LogicGenerator _logicGen;
-    private DataAccessGenerator _dataAccessGen;
+    private DataAccessGenerator _dataAccessGen;*/
 
     //Generated Names
     public string APIPartition;
@@ -39,18 +39,7 @@ public class BackendGenerator
 
     public void Greet()
     {
-        GeneratorHelper.WriteLine(
-        """
-
-         ____             _                  _    _____                           _                    __ 
-        |  _ \           | |                | |  / ____|                         | |                  /_ |
-        | |_) | __ _  ___| | _____ _ __   __| | | |  __  ___ _ __   ___ _ __ __ _| |_ ___  _ __  __   _| |
-        |  _ < / _` |/ __| |/ / _ \ '_ \ / _` | | | |_ |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \| '__| \ \ / / |
-        | |_) | (_| | (__|   <  __/ | | | (_| | | |__| |  __/ | | |  __/ | | (_| | || (_) | |     \ V /| |
-        |____/ \__,_|\___|_|\_\___|_| |_|\__,_|  \_____|\___|_| |_|\___|_|  \__,_|\__\___/|_|      \_/ |_|
-
-        """
-        , "bold");
+        GeneratorHelper.WriteLine(File.ReadAllText(_configPath + "greet.txt"), "bold");
 
         GeneratorHelper.Info("While generating the process inform about places which need checking / correction from your side.");
         GeneratorHelper.Info("Copy the Template first before modifying, or it will be overwritten by subsequent generation.");
@@ -159,21 +148,21 @@ public class BackendGenerator
     public void Generate()
     {
         //Start Generation
-        _dataAccessGen = new(this);
+        /*_dataAccessGen = new(this);
         _logicGen = new(this);
-        _apiGen = new(this);
+        _apiGen = new(this);*/
 
         GeneratorHelper.Info("Generating Boilerplate...");
 
         //sln
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             templateDirectory,
             targetDirectory,
             "Project.sln",
-            names.ProjectName,
-            [("api", APIPartition), ("logic", logicPartition), ("dataAccess", dataAccessPartition)]
+            names.ProjectName + ".sln",
+            parameters: new Dictionary<string, string> { { "api", APIPartition }, {"logic", logicPartition}, {"dataAccess", dataAccessPartition} }
         );
-
+        /*
         //only apply auth if used
 
         //API
@@ -202,5 +191,6 @@ public class BackendGenerator
             _dataAccessGen.GenerateRepository(table);
         }
         _dataAccessGen.GenerateAuthRepository();
+        */
     }
 }

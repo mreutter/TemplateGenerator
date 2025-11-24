@@ -15,3 +15,4 @@ C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\De
 C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.csproj.AssemblyReference.cache
 C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\bin\Debug\net8.0\Spectre.Console.dll
 C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendT.19705A4C.Up2Date
+C:\Users\reuttem1\Desktop\Backend Template Creator\BackendTemplateCreator\obj\Debug\net8.0\BackendTemplateCreator.sourcelink.json

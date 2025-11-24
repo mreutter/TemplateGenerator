@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿/*using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class APIGenerator
@@ -229,4 +229,4 @@ $"        return _{smallModelName}Service.Delete{modelName}(id) ? NoContent() : 
 
         return crud.ToString();
     }
-}
+}*/

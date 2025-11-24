@@ -11,10 +11,10 @@
             BackendGen.ReadConfig();
 
             //if tables file doesnt exist
-            BackendGen.ReadSQLFile();
-            BackendGen.WriteTableJSON();
+            //BackendGen.ReadSQLFile();
+            //BackendGen.WriteTableJSON();
 
-            BackendGen.ReadTableJSON();
+            //BackendGen.ReadTableJSON();
 
             //if names file doesnt exist
             BackendGen.GenerateNames();

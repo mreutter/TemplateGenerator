@@ -6,58 +6,42 @@ namespace BackendTemplateCreator.Generator;
 public class GeneratorHelper
 {
     private static string _successColor = "green";
-    private static string _failColor = "red";
-
     private static string _infoColor = "blue";
     private static string _warnColor = "yellow1";
     private static string _admonitionColor = "#ffaa00";
     private static string _errorColor = "#ff0000";
 
-    private static string SubstituteMarker(string path, (string,string)[] substituents)
+    private static string? TryRead(string filePath, string name)
     {
-        StringBuilder sb = new();
-        sb.Append(File.ReadAllText(path));
-
-
-        for (int i = 0; i < substituents.Length; i++)
-        {
-            sb.Replace($"${substituents[i].Item1}#", substituents[i].Item2);
-        }
-
-        return sb.ToString();
-    }
-    
-    public static void StitchReplaceFile(string source, string destination, string templateName, string projectName, (string,string)[] substituents)
-    {
-        //Template name includes its extension
-        string fileExtension = (projectName.Split('.').Length > 1 ? "" : Path.GetExtension(templateName));
-        string convertedFile = SubstituteMarker(source + templateName, substituents);
-        bool isSuccess = true;
-
-        //Create Directory if it doesnt exist
-        if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
-
-        //Delete if exists
-        string fullDestinationPath = destination + projectName + fileExtension;
-        if (File.Exists(fullDestinationPath))
-        {
-            Warn($"Overwrote {projectName}{fileExtension} file. ");
-            File.Delete(fullDestinationPath);
-        }
-
+        string? fileContent = null;
         try
         {
-            File.WriteAllText(fullDestinationPath, convertedFile);
+            //Read File
+            fileContent = File.ReadAllText(filePath);
+        }
+        catch (Exception e)
+        {
+            Error("Couldnt read file due to: " + e.Message, false);
+        }
+        return fileContent;
+    }
+    private static bool TryWrite(string filePath, string name, string content)
+    {
+        bool isSuccess = true;
+        try
+        {
+            File.WriteAllText(filePath, content);
         }
         catch (Exception e)
         {
             isSuccess = false;
-            WriteLine($"Failed to create: {destination}{projectName}{fileExtension} Error: {e.Message}", _failColor);
+            Error($"Failed to create {name}: {e}", false);
         }
         if (isSuccess)
         {
-            WriteLine($"Succesfully created: {destination}{projectName}{fileExtension}", _successColor);
+            WriteLine($"Successfully created {name}.", _successColor);
         }
+        return isSuccess;
     }
 
     public static void CopyRenameFile(string source, string destination, string templateName, string projectName)
@@ -79,85 +63,76 @@ public class GeneratorHelper
         catch (Exception e)
         {
             isSuccess = false;
-            WriteLine($"Failed to create: {destination}{projectName}{fileExtension} Error: {e.Message}", _failColor);
+            Error($"Failed to create {projectName}.", false);
         }
         if (isSuccess)
         {
-            WriteLine($"Succesfully created: {destination}{projectName}{fileExtension}", _successColor);
+            Info($"Successfully created {projectName}.");
         }
     }
 
-    public static void TemplateReplacer(string source, string destination, string templateName, string projectName, 
-        Dictionary<string, string> parameters, 
-        Dictionary<string, Dictionary<string, string>> sections, 
-        Dictionary<string, Dictionary<string, string>[]> multipleSections)
+    private static Dictionary<string, string> AssignDefinitions(MatchCollection sectionDefinitions)
+    {
+        Dictionary<string, string> sectionDefinitionMap = new();
+        for (int i = 0; i < sectionDefinitions.Count; i++)
+        {
+            GroupCollection currentDefinition = sectionDefinitions[i].Groups;
+            string identifier = currentDefinition[1].Value;
+            string definition = currentDefinition[3].Value;
+
+            sectionDefinitionMap[identifier] = definition;
+        }
+        return sectionDefinitionMap;
+    }
+
+    private static string ReplaceParameters(Regex regex, string combinedString, Dictionary<string, string> parameters)
+    {
+        string[] parameterSplit = regex.Split(combinedString);
+        for (int i = 0; i < parameterSplit.Length - 2; i += 2)
+        {
+            parameterSplit[i + 1] = parameters[parameterSplit[i + 1]];
+        }
+        return string.Join("", parameterSplit);
+    }
+
+    public static void TemplateReplacer(string source, string destination, string templateName, string projectName,
+        Dictionary<string, string> parameters = null,
+        Dictionary<string, bool> sections = null,
+        Dictionary<string, Dictionary<string, string>> sectionParameters = null,
+        Dictionary<string, Dictionary<string, string>[]> multipleSectionParameters = null)
     {
         //Create Directory if it doesnt exist
         string fullDestinationPath = destination + projectName;
         if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
 
-        string fileContent = string.Empty;
-        
-        //Read File
-        try
-        {
-            //Delete if exists
-            if (File.Exists(fullDestinationPath))
-            {
-                Warn($"Overwrote {projectName}.");
-                File.Delete(fullDestinationPath);
-            }
-
-            //Read File
-            fileContent = File.ReadAllText(fullDestinationPath);
-        }
-        catch (Exception e)
-        {
-            Error("Couldnt manipulate file due to: " + e.Message, false);
-        }
+        string fileContent = TryRead(source + templateName, projectName);
+        if (fileContent == null) { Info($"Skipping creation of {projectName}."); return; }
 
         //Extract Definition
-        var definitiveSectionDefinition = Regex.Match(fileContent, @"\$!=\s*\{\n([\s\S]*?)\}#");
-        var multipleSectionDefinitions = Regex.Matches(fileContent, @"\$\?\*\s*(\w+)\s*=\s*(\w*)\s*\{\n*([\s\S]*?)\}#");
-        var sectionDefinitions = Regex.Matches(fileContent, @"\$\?\s*(\w+)\s*=\s*(\w*)\s*\{\n*([\s\S]*?)\}#");
+        var definitiveSectionDefinition = Regex.Match(fileContent, @"\$!=\s*\{(?:\r\n|\n)?([\s\S]*?)\}#");
+        var multipleSectionDefinitions = Regex.Matches(fileContent, @"\$\?\*\s*(\w+)\s*=\s*(\w*)\s*\{(?:\r\n|\n)?([\s\S]*?)\}#");
+        var sectionDefinitions = Regex.Matches(fileContent, @"\$\?\s*(\w+)\s*=\s*(\w*)\s*\{(?:\r\n|\n)?([\s\S]*?)\}#");
 
-        Dictionary<string, string> multipleSectionDefinitionMap = new();
-        Dictionary<string, string> sectionDefinitionMap = new();
-        for (int i = 0; i < multipleSectionDefinitions.Count; i++)
-        {
-            //Extract from Match
-            GroupCollection currentDefinition = multipleSectionDefinitions[i].Groups;
-            string identifier = currentDefinition[1].Value;
-            string definition = currentDefinition[2].Value;
+        //Map Identifier to Definition
+        Dictionary<string, string> multipleSectionDefinitionMap = AssignDefinitions(multipleSectionDefinitions);
+        Dictionary<string, string> sectionDefinitionMap = AssignDefinitions(sectionDefinitions);
 
-            multipleSectionDefinitionMap[identifier] = definition;
-        }
-
-        for (int i = 0; i < sectionDefinitions.Count; i++)
-        {
-            GroupCollection currentDefinition = sectionDefinitions[i].Groups;
-            string identifier = currentDefinition[1].Value;
-            string definition = currentDefinition[2].Value;
-
-            sectionDefinitionMap[identifier] = definition;
-        }
-
-
-
-        //Find the used SectionLocations
-        //Until no more sections are found replace by getting indices of start and end
+        //Section Definition Regex
         Regex greg = new Regex(@"\$\?(\*|)\s*(\w+)\s*#", RegexOptions.Compiled);
-        Regex grog = new Regex(@"\$(\%|)\s*(\w+)\s*#", RegexOptions.Compiled);
+        //Local Parameter Regex
+        Regex grog = new Regex(@"\$\%\s*(\w+)\s*#", RegexOptions.Compiled);
+        //Global Parameter Regex
+        Regex grug = new Regex(@"\$\s*(\w+)\s*#", RegexOptions.Compiled);
 
-        string combinedContent = definitiveSectionDefinition.Value;
+        string combinedContent = definitiveSectionDefinition.Groups[1].Value; //Extract Group instead of Value to avoid the "$!={"
         string[] sectionSplitContent;
         int recursion = 0;
-        do
+        while (true)
         {
             //Max Recursion to avoid infinite cycle
-            if(++recursion > 5)
+            if (++recursion > 10)
             {
-                Error($"Recursion count exceeded: Template file {templateName} most likely contains a cyclic recursion, when used in combination with parameters for {projectName}.", false);
+                Error($"Exceeded Max Recursion level in {projectName}.", false);
                 Info($"Skipping generation of {projectName}.");
                 return;
             }
@@ -165,51 +140,45 @@ public class GeneratorHelper
             //Extract locations
             StringBuilder sectionInjectContent = new();
             sectionSplitContent = greg.Split(combinedContent);
-            for (int i = 0; i < sectionSplitContent.Length - 3; i += 3)
+
+            //Cant be split -> no more sections
+            if (sectionSplitContent.Length == 1) break;
+
+            for (int i = 0; i < sectionSplitContent.Length - 3; i += 3) // Needs to step by 3 because of capturing groups
             {
-                StringBuilder parameterInjectSection = new();
-                char sectionType = sectionSplitContent[i + 1][0];
                 string sectionIdentifier = sectionSplitContent[i + 2];
-                //after here it depends if its multipleSection or single section
-                if(sectionType == '*')
+                StringBuilder filledSection = new();
+
+                if (sectionSplitContent[i + 1] != string.Empty) //Multisection
                 {
                     string definition = multipleSectionDefinitionMap[sectionIdentifier];
-
-                    string[] parameterSplitSection = grog.Split(definition);
-                    foreach (var sectionParameters in multipleSections[sectionIdentifier])
+                    foreach (var p in multipleSectionParameters[sectionIdentifier])
                     {
-                        for (int j = 0; j < parameterSplitSection.Length - 3; j += 3)
-                        {
-                            char parameterType = parameterSplitSection[j + 1][0];
-                            string parameterIdentifier = parameterSplitSection[j + 2];
-
-                            parameterInjectSection.Append(parameterSplitSection[j]);
-                            parameterInjectSection.Append(parameterType == '%' ? sectionParameters[parameterIdentifier] : parameters[parameterIdentifier]);
-                        }
-                        parameterInjectSection.Append(parameterSplitSection.Last());
+                        //Replace Local
+                        filledSection.Append(ReplaceParameters(grog, definition, p));
                     }
-                } 
-                else
-                {
-                    string definition = sectionDefinitionMap[sectionIdentifier];
-
-                    string[] parameterSplitSection = grog.Split(definition);
-                    for (int j = 0; j < parameterSplitSection.Length - 3; j += 3)
-                    {
-                        char parameterType = parameterSplitSection[j + 1][0];
-                        string parameterIdentifier = parameterSplitSection[j + 2];
-
-                        parameterInjectSection.Append(parameterSplitSection[j]);
-                        parameterInjectSection.Append(parameterType == '%' ? sections[sectionIdentifier][parameterIdentifier] : parameters[parameterIdentifier]);
-                    }
-                    parameterInjectSection.Append(parameterSplitSection.Last());
                 }
+                else if (sections[sectionIdentifier]) //Section (Could also regex.replace beforehand)
+                {
+                    //Replace Local
+                    string definition = sectionDefinitionMap[sectionIdentifier];
+                    filledSection.Append(ReplaceParameters(grog, definition, sectionParameters[sectionIdentifier]));
+                }
+
+                //Add Section and definitive part
                 sectionInjectContent.Append(sectionSplitContent[i]);
-                sectionInjectContent.Append(parameterInjectSection.ToString());
+                sectionInjectContent.Append(filledSection.ToString());
             }
-        } while(sectionSplitContent.Length - 1 > 0);
+            
+            //Combine Parts
+            combinedContent = string.Join("", sectionInjectContent);
+        }
+
+        //Replace Global
+        string result = ReplaceParameters(grug, combinedContent, parameters).Replace("\r\n!¬", "").Replace("¬", "\r\n");
+        TryWrite(fullDestinationPath, projectName, result);
     }
-    
+
     public static void WriteLine(string message, string color)
     {
         Spectre.Console.AnsiConsole.Markup($"[{color}]{message}\n[/]");
