@@ -1,32 +1,94 @@
-﻿using $dataAccess#.Model;
+﻿$!={
+using $dataAccess#.Model;
 using $dataAccess#.Repository;
 using $logic#.DTO;
 
 namespace $logic#.Service;
 
-public class $modelName#Service : I$modelName#Service
+public class $serviceName# : I$serviceName#
 {
-    private readonly I$modelName#Repository _$smallModelName#Repository;
+    private readonly I$repoName# _$varRepoName#;
 
-    public $modelName#Service(I$modelName#Repository $smallModelName#Repository)
+    public $serviceName#(I$repoName# $varRepoName#)
     {
-        _$smallModelName#Repository = $smallModelName#Repository;
+        _$varRepoName# = $varRepoName#;
     }
 
-    private $modelName#Dto ToDto($modelName# $smallModelName#)
+    private $dtoName# ToDto($modelName# $varModelName#)
     {
-        return new $modelName#Dto
+        return new $dtoName#
         {
             //Conversion to Dto
         };
     }
 
-    private $modelName# ToModel($modelName#Dto $smallModelName#)
+    private $modelName# ToModel($dtoName# $varModelName#)
     {
         return new $modelName#
         {
             //Conversion to Model
         };
     }
-$CRUD#
+!¬$?getById#
+!¬$?getAll#
+!¬$?add#
+!¬$?update#
+!¬$?delete#
 }
+}#
+
+$?comment={
+    /// <inheritdoc />
+}#
+
+$?getById={
+    $?comment#
+    public $dtoName#? Get$modelName#ById(int id)
+    {
+        $modelName#? $varModelName# = _$varRepoName#.Get$modelName#ById(id);
+        if ($varModelName# == null) return null;
+        $dtoName# $varModelName#Dto = ToDto($varModelName#);
+        return $varModelName#Dto;
+    }
+}#
+
+$?getAll={
+    $?comment#
+    public IEnumerable<$dtoName#> GetAll$modelName#s()
+    {
+        return _$varRepoName#.GetAll$modelName#s().Select(x => ToDto(x));
+    }
+}#
+
+$?add={
+    $?comment#
+    public int Add$modelName#(Create$dtoName# $varModelName#)
+    {
+        $modelName# created$modelName# = ToModel($varModelName#);
+        _$varRepoName#.Add$modelName#(created$modelName#);
+        return created$modelName#.Id;
+    }
+}#
+
+$?update={
+    $?comment#
+    public bool Update$modelName#(int id, Update$dtoName# $varModelName#)
+    {
+        $modelName# $varModelName#ToUpdate = _$varRepoName#.Get$modelName#ById(id);
+        if ($varModelName#ToUpdate == null) return false;
+        //Conversion
+        _$varRepoName#.Update$modelName#($varModelName#ToUpdate);
+        return true;
+    }
+}#
+
+$?delete={
+    $?comment#
+    public bool Delete$modelName#(int id)
+    {
+        $modelName# $varModelName# = _$varRepoName#.Get$modelName#ById(id);
+        if ($varModelName# == null) return false;
+        _$varRepoName#.Delete$modelName#($varModelName#);
+        return true;
+    }
+}#

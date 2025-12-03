@@ -21,9 +21,9 @@ public class BackendGenerator
     public Names? names;
     public List<Table> tables = new();
 
-    /*private APIGenerator _apiGen;
+    private APIGenerator _apiGen;
     private LogicGenerator _logicGen;
-    private DataAccessGenerator _dataAccessGen;*/
+    private DataAccessGenerator _dataAccessGen;
 
     //Generated Names
     public string APIPartition;
@@ -119,7 +119,7 @@ public class BackendGenerator
         if (config.Key == string.Empty)
         {
             config.Key = GeneratorHelper.GenerateKey(64);
-            GeneratorHelper.Info("Generated Key.\n");
+            GeneratorHelper.Info("Generated Key.");
         }
 
         //Dont generate names if no tables exist
@@ -128,6 +128,7 @@ public class BackendGenerator
 
         dtoNames = new string[tablesCount];
         modelNames = new string[tablesCount];
+        dbSetNames = new string[tablesCount];
         repositoryNames = new string[tablesCount];
         serviceNames = new string[tablesCount];
         controllerNames = new string[tablesCount];
@@ -148,10 +149,11 @@ public class BackendGenerator
     public void Generate()
     {
         //Start Generation
-        /*_dataAccessGen = new(this);
+        _dataAccessGen = new(this);
         _logicGen = new(this);
-        _apiGen = new(this);*/
+        _apiGen = new(this);
 
+        Console.Write("\n");
         GeneratorHelper.Info("Generating Boilerplate...");
 
         //sln
@@ -160,37 +162,45 @@ public class BackendGenerator
             targetDirectory,
             "Project.sln",
             names.ProjectName + ".sln",
-            parameters: new Dictionary<string, string> { { "api", APIPartition }, {"logic", logicPartition}, {"dataAccess", dataAccessPartition} }
+            parameters: new Dictionary<string, string> { { "api", APIPartition }, { "logic", logicPartition }, { "dataAccess", dataAccessPartition } }
         );
-        /*
+
         //only apply auth if used
 
         //API
+        Console.Write("\n");
         GeneratorHelper.Info("Generating API Layer...");
         _apiGen.GenerateAPIBoilerplate();
-        foreach(var table in tables) _apiGen.GenerateController(table);
-        _apiGen.GenerateAuthController();
+        for (int i = 0; i < tables.Count; i++) _apiGen.GenerateController(i);
 
         //Logic
         GeneratorHelper.Info("Generating Logic Layer...");
         _logicGen.GenerateLogicBoilerplate();
-        foreach (var table in tables) 
+        for (int i = 0; i < tables.Count; i++)
         {
-            _logicGen.GenerateDto(table);
-            _logicGen.GenerateService(table);
+            _logicGen.GenerateDto(i);
+            _logicGen.GenerateService(i);
         }
-        _logicGen.GenerateAuthService();
-        _logicGen.GenerateAuthDto();
 
         //Data Access
+        Console.Write("\n");
         GeneratorHelper.Info("Generating DataAccess Layer...");
         _dataAccessGen.GenerateDataAccessBoilerplate();
-        foreach (var table in tables)
+        for (int i = 0; i < tables.Count; i++)
         {
-            _dataAccessGen.GenerateModel(table);
-            _dataAccessGen.GenerateRepository(table);
+            _dataAccessGen.GenerateModel(i);
+            _dataAccessGen.GenerateRepository(i);
         }
-        _dataAccessGen.GenerateAuthRepository();
-        */
+
+        //Conditionally Add Authentification
+        if (config.UseAuthentification)
+        {
+            _apiGen.GenerateAuthController();
+
+            _logicGen.GenerateAuthService();
+            _logicGen.GenerateAuthDto();
+
+            _dataAccessGen.GenerateAuthRepository();
+        }
     }
 }

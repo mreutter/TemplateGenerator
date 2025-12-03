@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿$!={
+using Microsoft.EntityFrameworkCore;
 using $dataAccess#.Model;
 
 namespace $dataAccess#.Repository;
 
-public class $modelName#Repository : I$modelName#Repository
+public class $repoName# : I$repoName#
 {
     private readonly $dbContextName# _db;
 
@@ -11,8 +12,61 @@ public class $modelName#Repository : I$modelName#Repository
     /// Sets the DbContext reference.
     /// </summary>
     /// <param name="db">The database context to be used for data operations.</param>
-    public $modelName#Repository($dbContextName# db)
+    public $repoName#($dbContextName# db)
     {
         _db = db;
-    }$CRUD#
+    }
+!¬$?getById#
+!¬$?getAll#
+!¬$?add#
+!¬$?update#
+!¬$?delete#
 }
+}#
+
+$?comment={
+    /// <inheritdoc />
+}#
+
+$?getById={
+    $?comment#
+    public $modelName#? Get$modelName#ById(int id)
+    {
+        return _db.$dbSetName#.Find(id);
+    }
+!¬}#
+
+$?getAll={
+    $?comment#
+    public IEnumerable<$modelName#> GetAll$modelName#s()
+    {
+        return _db.$dbSetName#.ToList();
+    }
+!¬}#
+
+$?add={
+    $?comment#
+    public void Add$modelName#($modelName# new$modelName#)
+    {
+        _db.$dbSetName#.Add(new$modelName#);
+        _db.SaveChanges();
+    }
+!¬}#
+
+$?update={
+    $?comment#
+    public void Update$modelName#($modelName# update$modelName#)
+    {
+        _db.$dbSetName#.Update(update$modelName#);
+        _db.SaveChanges();
+    }
+!¬}#
+
+$?delete={
+    $?comment#
+    public void Delete$modelName#($modelName# remove$modelName#)
+    {
+        _db.$dbSetName#.Remove(remove$modelName#);
+        _db.SaveChanges();
+    }
+!¬}#

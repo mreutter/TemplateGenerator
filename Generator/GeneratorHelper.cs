@@ -35,11 +35,11 @@ public class GeneratorHelper
         catch (Exception e)
         {
             isSuccess = false;
-            Error($"Failed to create {name}: {e}", false);
+            Error($"Failed to create \"{name}\": {e}", false);
         }
         if (isSuccess)
         {
-            WriteLine($"Successfully created {name}.", _successColor);
+            WriteLine($"Successfully created \"{name}\".", _successColor);
         }
         return isSuccess;
     }
@@ -63,11 +63,11 @@ public class GeneratorHelper
         catch (Exception e)
         {
             isSuccess = false;
-            Error($"Failed to create {projectName}.", false);
+            Error($"Failed to create \"{projectName}\".", false);
         }
         if (isSuccess)
         {
-            Info($"Successfully created {projectName}.");
+            Info($"Successfully created \"{projectName}\".");
         }
     }
 
@@ -85,11 +85,16 @@ public class GeneratorHelper
         return sectionDefinitionMap;
     }
 
-    private static string ReplaceParameters(Regex regex, string combinedString, Dictionary<string, string> parameters)
+    private static string ReplaceParameters(Regex regex, string combinedString, Dictionary<string, string> parameters, string projectName)
     {
         string[] parameterSplit = regex.Split(combinedString);
         for (int i = 0; i < parameterSplit.Length - 2; i += 2)
         {
+            if(!parameters.ContainsKey(parameterSplit[i + 1]))
+            {
+                Error($"Couldnt find the parameter \"{parameterSplit[i + 1]}\" while generating \"{projectName}\".", false);
+                throw new Exception("Invalid Parameter");
+            }
             parameterSplit[i + 1] = parameters[parameterSplit[i + 1]];
         }
         return string.Join("", parameterSplit);
@@ -151,22 +156,64 @@ public class GeneratorHelper
 
                 if (sectionSplitContent[i + 1] != string.Empty) //Multisection
                 {
-                    string definition = multipleSectionDefinitionMap[sectionIdentifier];
-                    foreach (var p in multipleSectionParameters[sectionIdentifier])
+                    if (!multipleSectionDefinitionMap.ContainsKey(sectionIdentifier))
                     {
-                        //Replace Local
-                        filledSection.Append(ReplaceParameters(grog, definition, p));
+                        Error($"Couldnt find the multipleSection with \"{sectionIdentifier}\" while generating \"{projectName}\".", false);
+                        Warn($"Skipping generation of {projectName}.");
+                        return;
+                    }
+                    string definition = multipleSectionDefinitionMap[sectionIdentifier];
+                    if (multipleSectionParameters != null && multipleSectionParameters.ContainsKey(sectionIdentifier))
+                    {
+                        foreach (var p in multipleSectionParameters[sectionIdentifier])
+                        {
+                            //Replace Local
+                            string str;
+                            try
+                            {
+                                str = ReplaceParameters(grog, definition, p, projectName);
+                            }
+                            catch (Exception e)
+                            {
+                                Warn($"Skipping generation of \"{projectName}\".");
+                                return;
+                            }
+                            filledSection.Append(str);
+                        }
+                    } else
+                    {
+
                     }
                 }
-                else if (sections[sectionIdentifier]) //Section (Could also regex.replace beforehand)
+                else if (sections.ContainsKey(sectionIdentifier) && sectionDefinitionMap.ContainsKey(sectionIdentifier)) //Section (Could also regex.replace beforehand)
                 {
                     //Replace Local
                     string definition = sectionDefinitionMap[sectionIdentifier];
-                    filledSection.Append(ReplaceParameters(grog, definition, sectionParameters[sectionIdentifier]));
+                    if (sectionParameters != null && sectionParameters[sectionIdentifier] != null)
+                    {
+                        //Replace Local
+                        string str;
+                        try
+                        {
+                            str = ReplaceParameters(grog, definition, sectionParameters[sectionIdentifier], projectName);
+                        }
+                        catch (Exception e)
+                        {
+                            Warn($"Skipping generation of \"{projectName}\".");
+                            return;
+                        }
+                        filledSection.Append(str);
+                    }
+                    else filledSection.Append(definition);
+                } else
+                {
+                    Error($"Couldnt find section identifier \"{sectionIdentifier}\" in the Template: \"{templateName}\" while generating \"{projectName}\".", false);
+                    Warn($"Skipping generation of {projectName}");
+                    return;
                 }
 
-                //Add Section and definitive part
-                sectionInjectContent.Append(sectionSplitContent[i]);
+                    //Add Section and definitive part
+                    sectionInjectContent.Append(sectionSplitContent[i]);
                 sectionInjectContent.Append(filledSection.ToString());
             }
             
@@ -175,8 +222,17 @@ public class GeneratorHelper
         }
 
         //Replace Global
-        string result = ReplaceParameters(grug, combinedContent, parameters).Replace("\r\n!¬", "").Replace("¬", "\r\n");
-        TryWrite(fullDestinationPath, projectName, result);
+        string result;
+        try
+        {
+            result = ReplaceParameters(grug, combinedContent, parameters, projectName).Replace("\r\n!¬", "").Replace("¬", "\r\n");
+            TryWrite(fullDestinationPath, projectName, result);
+        }
+        catch (Exception e)
+        {
+            Warn($"Skipping generation of \"{projectName}\".");
+            return;
+        }
     }
 
     public static void WriteLine(string message, string color)
@@ -213,6 +269,11 @@ public class GeneratorHelper
         }
 
         return sb.ToString();
+    }
+
+    public static string ToLowerFirst(string str)
+    {
+        return char.ToLower(str[0]) + str.Substring(1);
     }
 }
 

@@ -1,8 +1,79 @@
-﻿using $logic#.DTO;
+﻿$!={
+using $logic#.DTO;
 
 namespace $logic#.Service;
 
-public interface I$modelName#Service
+public interface I$serviceName#
 {
-$CRUD#
+!¬$?getById#
+!¬$?getAll#
+!¬$?add#
+!¬$?update#
+!¬$?delete#
 }
+}#
+
+$?commentGetById={
+    /// <summary>
+    /// Gets the $modelName# with the given id.
+    /// </summary>
+    /// <param name=\"id\"> The id of the looked up $modelName#.</param>
+    /// <returns>The $dtoName# of the Model with the specified id.</returns>
+}#
+
+$?commentGetAll={
+    /// <summary>
+    /// Gets all $modelName#s.
+    /// </summary>
+    /// <returns> A list of all $dtoName#s.</returns>
+}#
+
+$?commentAdd={
+    /// <summary>
+    /// Adds a $modelName# to the database via the Create$dtoName#.
+    /// </summary>
+    /// <param name=\"Create$dtoName#\">A Dto to be added to the database. </param>
+    /// <returns> The id of the newly created $modelName#. </returns>
+}#
+
+$?commentUpdate={
+    /// <summary>
+    /// Updates a $modelName# of the database via the Update$dtoName#.
+    /// </summary>
+    /// <param name=\"Create$dtoName#\">The Dto to be changed in the database. </param>
+    /// <returns> Whether or not the update was successful. </returns>
+}#
+
+$?commentDelete={
+    /// <summary>
+    /// Deletes a $modelName# with the specified id.
+    /// </summary>
+    /// <param name=\"id\"> The id of the $modelName# to be deleted. </param>
+    /// <returns> Wether or not the deletion was successful. </returns>
+}#
+
+
+$?getById={
+    $?commentGetById#
+    $dtoName#? Get$modelName#ById(int id);
+}#
+
+$?getAll={
+    $?commentGetAll#
+    IEnumerable<$dtoName#> GetAll$modelName#s();
+}#
+
+$?add={
+    $?commentAdd#
+    int Add$modelName#(Create$dtoName# {modelName.ToLower()});
+}#
+
+$?update={
+    $?commentUpdate#
+    bool Update$modelName#(int id, Update$dtoName# {modelName.ToLower()});
+}#
+
+$?delete={
+    $?commentDelete#
+    bool Delete$modelName#(int id);
+}#

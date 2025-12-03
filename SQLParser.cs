@@ -54,7 +54,7 @@ public class SQLParser
 
             if (line.StartsWith("CHECK", StringComparison.OrdinalIgnoreCase))
             {
-                GeneratorHelper.Admonition("Table \"{tableName}\" uses a CHECK. This must be implemented manually.", "SQL ");
+                GeneratorHelper.Admonition($"Table \"{tableName}\" uses a CHECK. This must be implemented manually.", "SQL ");
             }
 
             var match = Regex.Match(line, @"^(\w+)\s+(\w+)(?:\((\d+)\))?.*$", RegexOptions.IgnoreCase);
@@ -67,7 +67,7 @@ public class SQLParser
                 string[] referencedTableAndId = words[4].Split('(');
                 string referencedTable = referencedTableAndId[0];
                 string referencedId = referencedTableAndId[1].Replace(")", "");
-                GeneratorHelper.Warn("\"{foreignKey}\" in table \"{tableName}\" is a foreign key which references \"{referencedId}\" from table \"{referencedTable}\"", "SQL ");
+                GeneratorHelper.Warn($"\"{foreignKey}\" in table \"{tableName}\" is a foreign key which references \"{referencedId}\" from table \"{referencedTable}\"", "SQL ");
                 continue;
             }
 

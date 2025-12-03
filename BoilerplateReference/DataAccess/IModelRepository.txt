@@ -1,8 +1,75 @@
-﻿using $dataAccess#.Model;
+﻿$!={
+using $dataAccess#.Model; //Custom path?
 
-namespace $dataAccess#.Repository;
+namespace $dataAccess#.Repository; //Custom path?
 
-public interface I$modelName#Repository
+public interface I$repoName#
 {
-$CRUD#
+!¬$?getById#
+!¬$?getAll#
+!¬$?add#
+!¬$?update#
+!¬$?delete#
 }
+}#
+
+$?getByIdComment={
+    /// <summary>
+    /// Gets the $modelName# with a specifed Id.
+    /// </summary>
+    /// <param name="id"> The Id of the $modelName# to get. </param>
+    /// <returns> The $modelName# model with the specified Id. </returns>
+!¬}#
+
+$?getAllComment={
+    /// <summary>
+    /// Gets all $modelName#s.
+    /// </summary>
+    /// <returns> A list of $modelName# models. </returns>
+!¬}#
+
+$?addComment={
+    /// <summary>
+    /// Adds the given model to the Database.
+    /// </summary>
+    /// <param name="new$modelName#"> The $modelName# to get added. </param>
+!¬}#
+
+$?updateComment={
+    /// <summary>
+    /// Updates the given $modelName# with its new values.
+    /// </summary>
+    /// <param name="update$modelName#"> The $modelName# containing the updated values. </param>
+!¬}#
+
+$?deleteComment={
+    /// <summary>
+    /// Deletes the given $modelName#.
+    /// </summary>
+    /// <param name="remove$modelName#"> The $modelName# to remove. </param>
+!¬}#
+
+$?getById={
+    $?getByIdComment#
+    $modelName#? Get$modelName#ById(int id);        
+!¬}#
+
+$?getAll={
+    $?getAllComment#
+    IEnumerable<$modelName#> GetAll$modelName#s();
+!¬}#
+
+$?add={
+    $?addComment#
+    void Add$modelName#($modelName# new$modelName#);
+!¬}#
+
+$?update={
+    $?updateComment#
+    void Update$modelName#($modelName# update$modelName#);
+!¬}#
+
+$?delete={
+    $?deleteComment#
+    void Delete$modelName#($modelName# remove$modelName#);
+!¬}#

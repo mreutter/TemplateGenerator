@@ -1,4 +1,5 @@
-﻿using $dataAccess#.Model;
+﻿$!={
+using $dataAccess#.Model;
 using $dataAccess#.Repository;
 using $logic#.DTO;
 using Microsoft.Extensions.Configuration;
@@ -22,13 +23,13 @@ public class AuthService : IAuthService
 
     public LoginResponseDto? Verify$identifier#(LoginRequestDto loginReq)
     {
-        $authType#? $smallAuthType# = _authRepository.Get$authType#By$identifier#(loginReq.$identifier#);
-        if ($smallAuthType# == null) return null;
+        $authType#? $varAuthType# = _authRepository.Get$authType#By$identifier#(loginReq.$identifier#);
+        if ($varAuthType# == null) return null;
 
-        return new LoginResponseDto { Token = GenerateJwtToken($smallAuthType#) };
+        return new LoginResponseDto { Token = GenerateJwtToken($varAuthType#) };
     }
 
-    private string GenerateJwtToken($authType# $smallAuthType#)
+    private string GenerateJwtToken($authType# $varAuthType#)
     {
         JwtSecurityTokenHandler tokenHandler = new();
 
@@ -37,27 +38,27 @@ public class AuthService : IAuthService
         Claim[] claims = new[]
         {
             //Claims
-            new Claim(JwtRegisteredClaimNames.Sub, $smallAuthType#.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, $smallAuthType#.Email),
-            new Claim(JwtRegisteredClaimNames.GivenName, $smallAuthType#.FirstName),
-            new Claim(JwtRegisteredClaimNames.FamilyName, $smallAuthType#.LastName)
+            new Claim(JwtRegisteredClaimNames.Sub, $varAuthType#.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, $varAuthType#.Email),
+            new Claim(JwtRegisteredClaimNames.GivenName, $varAuthType#.FirstName),
+            new Claim(JwtRegisteredClaimNames.FamilyName, $varAuthType#.LastName)// Claims ----------------------------------------------- From config
         };
 
         SecurityTokenDescriptor tokenDescriptor = new
             SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = DateTime.UtcNow.AddHours(2), // Expiry time
             Issuer = _config["Jwt:Issuer"],
             Audience = _config["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature
+                SecurityAlgorithms.HmacSha256Signature // Hashing algorithm
             )
         };
 
         SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
 }
+}#

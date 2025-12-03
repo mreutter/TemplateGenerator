@@ -1,17 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿$!={
+using Microsoft.EntityFrameworkCore;
 using $dataAccess#.Model;
 
 namespace $dataAccess#;
 
 public class $dbContextName# : DbContext
 {
-    /// <summary>
-    /// {summary}
-    /// </summary>
-    /// <param name="{paramName}">{paramDescription}</param>
-    /// <returns>{returnDescription}</returns>
+!¬$?comment#
     public $dbContextName#(DbContextOptions<$dbContextName#> options) :
         base(options)
     { }
 $dbSets#
 }
+}#
+
+$?comment={¬
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="    ">    </param>
+    /// <returns>     </returns>
+!¬}#
+
+$?*dbSets={
+    public DbSet<$%modelName#> $%dbSetName# { get; set; }
+}#

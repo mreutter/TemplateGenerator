@@ -3,28 +3,44 @@
   "WorkspaceRootPath": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\backendgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:backendgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\sqlparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:sqlparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\generator\\dataaccessgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:generator\\dataaccessgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\generator\\generatorhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:generator\\generatorhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\todo.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:todo.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\generator\\logicgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:generator\\logicgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\backendgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:backendgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\config\\file.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:config\\file.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\config\\names.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:config\\names.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\generator\\dataaccessgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:generator\\dataaccessgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\generator\\apigenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:generator\\apigenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|c:\\users\\reuttem1\\desktop\\backend template creator\\backendtemplatecreator\\config\\file.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{2C250D5E-22D2-4330-8A9C-7518F571192C}|BackendTemplateCreator.csproj|solutionrelative:config\\file.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,21 +50,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "TODO.md",
-              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\TODO.md",
-              "RelativeDocumentMoniker": "TODO.md",
-              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\TODO.md",
-              "RelativeToolTip": "TODO.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-11-24T08:33:50.878Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
@@ -56,43 +59,76 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SQLParser.cs",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\SQLParser.cs",
+              "RelativeDocumentMoniker": "SQLParser.cs",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\SQLParser.cs",
+              "RelativeToolTip": "SQLParser.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAwwHMAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T10:03:34.138Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
+              "Title": "names.json",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Config\\names.json",
+              "RelativeDocumentMoniker": "Config\\names.json",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Config\\names.json",
+              "RelativeToolTip": "Config\\names.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-03T09:58:32.043Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T17:50:07.769Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DataAccessGenerator.cs",
-              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\DataAccessGenerator.cs",
-              "RelativeDocumentMoniker": "Generator\\DataAccessGenerator.cs",
-              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\DataAccessGenerator.cs",
-              "RelativeToolTip": "Generator\\DataAccessGenerator.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAtwLwAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-11T13:57:57.765Z",
+              "WhenOpened": "2025-12-03T09:27:00.003Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "README.md",
-              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\README.md",
-              "RelativeDocumentMoniker": "README.md",
-              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\README.md",
-              "RelativeToolTip": "README.md",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAB4AAABXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-11-10T12:08:06.711Z"
+              "DocumentIndex": 3,
+              "Title": "LogicGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\LogicGenerator.cs",
+              "RelativeDocumentMoniker": "Generator\\LogicGenerator.cs",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\LogicGenerator.cs",
+              "RelativeToolTip": "Generator\\LogicGenerator.cs",
+              "ViewState": "AgIAAL0AAAAAAAAAAADgv9sAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T09:23:58.263Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "file.sql ",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Config\\file.sql",
+              "RelativeDocumentMoniker": "Config\\file.sql",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Config\\file.sql",
+              "RelativeToolTip": "Config\\file.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-12-03T09:15:35.661Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -102,22 +138,48 @@
               "RelativeDocumentMoniker": "Generator\\GeneratorHelper.cs",
               "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\GeneratorHelper.cs",
               "RelativeToolTip": "Generator\\GeneratorHelper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAGoAAAAAAAAAAAAmwDQAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-10T06:57:26.982Z",
+              "WhenOpened": "2025-12-03T09:11:59.758Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "BackendGenerator.cs",
               "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\BackendGenerator.cs",
               "RelativeDocumentMoniker": "BackendGenerator.cs",
               "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\BackendGenerator.cs",
               "RelativeToolTip": "BackendGenerator.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAQwKEAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAACAAAAAAAAAAAAAQwHgAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-06T13:05:47.647Z",
+              "WhenOpened": "2025-12-03T09:10:23.048Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "APIGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\APIGenerator.cs",
+              "RelativeDocumentMoniker": "Generator\\APIGenerator.cs",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\APIGenerator.cs",
+              "RelativeToolTip": "Generator\\APIGenerator.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAowI4AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T09:08:34.057Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DataAccessGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\DataAccessGenerator.cs",
+              "RelativeDocumentMoniker": "Generator\\DataAccessGenerator.cs",
+              "ToolTip": "C:\\Users\\reuttem1\\Desktop\\Backend Template Creator\\BackendTemplateCreator\\Generator\\DataAccessGenerator.cs",
+              "RelativeToolTip": "Generator\\DataAccessGenerator.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAwwHEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T13:57:57.765Z",
               "EditorCaption": ""
             }
           ]

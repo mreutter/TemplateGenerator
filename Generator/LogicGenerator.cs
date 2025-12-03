@@ -1,4 +1,5 @@
-﻿/*using System.Text;
+﻿using Spectre.Console;
+using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class LogicGenerator
@@ -7,8 +8,6 @@ public class LogicGenerator
 
     private string _targetDirectory;
     private string _templateDirectory;
-
-    private Dictionary<string, string> _DtoNames = new();
     public LogicGenerator(BackendGenerator backendGen)
     {
         _g = backendGen;
@@ -16,7 +15,8 @@ public class LogicGenerator
         _templateDirectory = _g.templateDirectory + "Logic\\";
         _targetDirectory = _g.targetDirectory + _g.logicPartition + "\\";
 
-        if (!Directory.Exists(_targetDirectory)){
+        if (!Directory.Exists(_targetDirectory))
+        {
             Directory.CreateDirectory(_targetDirectory);
         }
     }
@@ -24,278 +24,251 @@ public class LogicGenerator
     public void GenerateLogicBoilerplate()
     {
         //csproj change
-        string includeJWT = "\r\n    <PackageReference Include=\"System.IdentityModel.Tokens.Jwt\" Version=\"8.14.0\" />";
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "Project.csproj",
             _g.logicPartition,
-            [("includeJWT",_g.config.UseAuthentification ?  includeJWT : ""), ("dataAccess",_g.dataAccessPartition)]
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"includeJWT", _g.config.UseAuthentification}
+            }
         );
 
-        StringBuilder serviceInjections = new();
-        foreach (Table table in _g.tables) //-----------------------------------------------------------------------------------------------Utilize Nameing
+        Dictionary<string, string>[] serviceInjections = new Dictionary<string, string>[_g.serviceNames.Length];
+        for (int i = 0; i < _g.serviceNames.Length; i++)
         {
-            serviceInjections.Append($"\r\n        services.AddScoped<I{table.ModelName}Service, {table.ModelName}Service>();");
+            serviceInjections[i] = new Dictionary<string, string> { { "service", _g.serviceNames[i] } };
         }
 
         //dependency
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "LogicDependency.txt",
             _g.names.LogicDependencyInjectName + ".cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("logic", _g.logicPartition),
-                ("logicDependencyInjectName", _g.names.LogicDependencyInjectName),
-                ("serviceInjections", serviceInjections.ToString())
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                { "dataAccess", _g.dataAccessPartition},
+                {"logic", _g.logicPartition},
+                {"logicDependencyInjectName", _g.names.LogicDependencyInjectName},
+            },
+            multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                { "serviceInjections", serviceInjections }
+            }
         );
     }
-    public void GenerateService(Table table)
+    public void GenerateService(int tIndex)
     {
+        Table table = _g.tables[tIndex];
         //Interface
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Service\\",
             "IModelService.txt",
-            $"I{table.ModelName}Service.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("modelName", table.ModelName),
-                ("CRUD", xxx ? GenerateServiceInterfaceCRUD(table) : "   ")
-            ]
+            $"I{_g.serviceNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"logic", _g.logicPartition },
+                {"serviceName", _g.serviceNames[tIndex]},
+                {"modelName", _g.modelNames[tIndex]},
+                {"dtoName", _g.dtoNames[tIndex]}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                { "commentGetById", true },
+                { "commentGetAll", true },
+                { "commentAdd", true },
+                { "commentUpdate", true },
+                { "commentDelete", true },
+
+                { "getById", table.UseGetById },
+                { "getAll", table.UseGetAll },
+                { "add", table.UseAdd },
+                { "update", table.UseUpdate },
+                { "delete", table.UseDelete },
+            }
         );
         //Service
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Service\\",
             "ModelService.txt",
-            $"{table.ModelName}Service.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("dataAccess", _g.dataAccessPartition),
-                ("modelName", table.ModelName),
-                ("smallModelName", table.ModelName.ToLower()),
-                ("CRUD", xxx ? "\r\n" +GenerateServiceClassCRUD(table) : "")
-            ]
+            $"{_g.serviceNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                { "dataAccess", _g.dataAccessPartition },
+                { "logic", _g.logicPartition },
+                { "serviceName", _g.serviceNames[tIndex]},
+                { "modelName", _g.modelNames[tIndex]},
+                { "dtoName", _g.dtoNames[tIndex]},
+                { "repoName", _g.repositoryNames[tIndex]},
+                { "varRepoName", GeneratorHelper.ToLowerFirst(_g.repositoryNames[tIndex])},
+                { "varModelName", GeneratorHelper.ToLowerFirst(_g.modelNames[tIndex])}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                { "comment", true },
+
+                { "getById", table.UseGetById },
+                { "getAll", table.UseGetAll },
+                { "add", table.UseAdd },
+                { "update", table.UseUpdate },
+                { "delete", table.UseDelete },
+            }
         );
     }
-    public void GenerateDto(Table table)
+    public void GenerateDto(int tIndex)
     {
+        Table table = _g.tables[tIndex];
         //Dto
-        var properties = new StringBuilder();
-
-        foreach (var col in table.Properties)
+        var dataAnnotationsSB = new StringBuilder();
+        string[] dataAnnotations = new string[table.Properties.Count];
+        for (int i = 0; i < table.Properties.Count; i++)
         {
+            Property col = table.Properties[i];
+
             if (!col.IsDtoProperty) continue;
 
-            if (col.IsRequired) properties.AppendLine("    [Required]"); //Auto add error message depending on options
+            if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column({col.DatabaseName})]");
 
-            if (_g.config.InferType)//Multiple DataAnnotations in one by [,]
+            if (col.IsRequired) dataAnnotationsSB.AppendLine("    [Required]"); //Auto add error message depending on options
+
+            //Option to infer type
+            if (_g.config.InferType)
             {
-                if (col.DatabaseName.ToLower().Contains("email")) properties.AppendLine("    [EmailAddress]");
-                else if (col.DatabaseName.ToLower().Contains("phone")) properties.AppendLine("    [Phone]");
+                if (col.DatabaseName.ToLower().Contains("email")) { dataAnnotationsSB.AppendLine("    [EmailAddress]"); GeneratorHelper.Warn($"In table {table.ModelName} column {col.DatabaseName} is thought to be an Email Address."); }
+                else if (col.DatabaseName.ToLower().Contains("phone")) { dataAnnotationsSB.AppendLine("    [Phone]"); GeneratorHelper.Warn($"In table {table.ModelName} column {col.DatabaseName} is thought to be an Phone Number."); }
             }
 
             if (col.Length.HasValue)
-                properties.AppendLine($"    [MaxLength({col.Length.Value})]");
+                dataAnnotationsSB.AppendLine($"    [MaxLength({col.Length.Value})]");
 
             if (col.IsPrimaryKey)
-                properties.AppendLine($"    [Key]");
+                dataAnnotationsSB.AppendLine($"    [Key]");
+            // Also automatically convert fk 1:n (how to detect) relationships into collections
 
-            properties.AppendLine($"    public {col.CSharpType} {col.DatabaseName} {{ get; set; }}\r\n");
+            dataAnnotations[i] = dataAnnotationsSB.ToString();
+            dataAnnotationsSB.Clear();
         }
 
-        GeneratorHelper.StitchReplaceFile(
+        Dictionary<string, string>[] properties = new Dictionary<string, string>[table.Properties.Count];
+        for (int i = 0; i < table.Properties.Count; i++)
+        {
+            properties[i] = new Dictionary<string, string>
+            {
+                { "dataAnnotations", dataAnnotations[i] },
+                { "type", table.Properties[i].CSharpType },
+                { "modelName", table.Properties[i].ModelName }
+            };
+        }
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
             "ModelDto.txt",
-            $"{_DtoNames[table.ModelName]}.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("dtoName", _DtoNames[table.ModelName]),
-                ("properties", properties.ToString())
-            ]
+            $"{_g.dtoNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"logic", _g.logicPartition},
+                {"dtoName", _g.dtoNames[tIndex]},
+                {"properties", properties.ToString()}
+            }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"properties", properties}
+            }
         );
 
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
             "ModelDto.txt",
-            $"Update{_DtoNames[table.ModelName]}.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("dtoName", "Update"+_DtoNames[table.ModelName]),
-                ("properties", properties.ToString())
-            ]
+            $"Create{_g.dtoNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"logic", _g.logicPartition},
+                {"dtoName", "Create"+_g.dtoNames[tIndex]},
+                {"properties", properties.ToString()}
+            }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"properties", properties}
+            }
         );
 
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
             "ModelDto.txt",
-            $"Create{_DtoNames[table.ModelName]}.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("dtoName", "Create"+_DtoNames[table.ModelName]),
-                ("properties", properties.ToString())
-            ]
+            $"Update{_g.dtoNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"logic", _g.logicPartition},
+                {"dtoName", "Update"+_g.dtoNames[tIndex]},
+                {"properties", properties.ToString()}
+            }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"properties", properties}
+            }
         );
     }
 
-    public void GenerateAuthService() 
+    public void GenerateAuthService()
     {
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Service\\",
             "IAuthService.txt",
             "IAuthService.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("identifier", _g.config.AuthIdentifer)
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                {"logic", _g.logicPartition },
+                { "identifier", _g.config.AuthIdentifer }
+            }
         );
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Service\\",
             "AuthService.txt",
             "AuthService.cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("logic", _g.logicPartition),
-                ("authType", _g.config.AuthType),
-                ("smallAuthType", _g.config.AuthType.ToLower()),
-                ("identifier", _g.config.AuthIdentifer),
-                ("smallIdentifier", _g.config.AuthIdentifer.ToLower())
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition},
+                {"logic", _g.logicPartition},
+                {"authType", _g.config.AuthType},
+                {"varAuthType", GeneratorHelper.ToLowerFirst(_g.config.AuthType)},
+                {"identifier", _g.config.AuthIdentifer}
+                //Claims
+                //Multiple Credentials
+                //Custom DTOs
+            }
         );
     }
-    public void GenerateAuthDto() {
-        *//*[Required]
-        [EmailAddress]
-        [MaxLength(100)]
-        public string Email { get; set; }*//*
-
-        GeneratorHelper.StitchReplaceFile(
+    public void GenerateAuthDto() //Better accomodation for future auth types (Also 2FA)
+    {
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
             "LoginRequestDto.txt",
             "LoginRequestDto.cs",
-            [
-                ("logic", _g.logicPartition),
-                ("authProperties", "public string " + _g.config.AuthIdentifer + " { get; set; }")
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                { "logic", _g.logicPartition },
+                {"authProperties", "public string " + _g.config.AuthIdentifer + " { get; set; }"} //Custom multipe credentials
+            }
         );
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
             "LoginResponseDto.txt",
             "LoginResponseDto.cs",
-            [
-                ("logic", _g.logicPartition)
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                { "logic", _g.logicPartition }
+            }
         );
     }
-
-
-    private string GenerateServiceClassCRUD(Table table)
-    {
-        StringBuilder crud = new StringBuilder();
-        string comment = "\r\n   /// <inheritdoc />\r\n";
-
-        string modelName = table.ModelName;
-        string smallModelName = table.ModelName.ToLower();
-
-        crud.Append(
-        comment +
-$"   public {modelName}Dto? Get{modelName}ById(int id)\r\n" +
-"   {\r\n" +
-$"       {modelName}? {smallModelName} = _{smallModelName}Repository.Get{modelName}ById(id);\r\n" +
-$"       if ({smallModelName} == null) return null;\r\n" +
-$"       {modelName}Dto {smallModelName}Dto = ToDto({smallModelName});\r\n" +
-$"       return {smallModelName}Dto;\r\n" +
-"   }\r\n");
-        crud.Append(
-        comment +
-$"   public IEnumerable<{modelName}Dto> GetAll{modelName}s()\r\n" +
-"   {\r\n" +
-$"       return _{smallModelName}Repository.GetAll{modelName}s().Select(x => ToDto(x));\r\n" +
-"   }\r\n");
-        crud.Append(
-        comment +
-$"    public int Add{modelName}(Create{modelName}Dto {smallModelName})\r\n" +
-"    {\r\n" +
-$"        {modelName} created{modelName} = ToModel({smallModelName});\r\n" +
-$"        _{smallModelName}Repository.Add{modelName}(created{modelName});\r\n" +
-$"        return created{modelName}.Id;\r\n" +
-"    }\r\n");
-        crud.Append(
-        comment +
-$"   public bool Update{modelName}(int id, Update{modelName}Dto {smallModelName})\r\n" +
-"   {\r\n" +
-$"       {modelName} {smallModelName}ToUpdate = _{smallModelName}Repository.Get{modelName}ById(id);\r\n" +
-$"       if ({smallModelName}ToUpdate == null) return false;\r\n" +
-$"       //Conversion\r\n" +
-$"       _{smallModelName}Repository.Update{modelName}({smallModelName}ToUpdate);\r\n" +
-$"       return true;\r\n" +
-"   }\r\n");
-        crud.Append(
-        comment +
-$"    public bool Delete{modelName}(int id)\r\n" +
-"    {\r\n" +
-$"        {modelName} {smallModelName} = _{smallModelName}Repository.Get{modelName}ById(id);\r\n" +
-$"        if ({smallModelName} == null) return false;\r\n" +
-$"        _{smallModelName}Repository.Delete{modelName}({smallModelName});\r\n" +
-$"        return true;\r\n" +
-"    }\r\n");
-
-
-        return crud.ToString();
-    }
-
-    private string GenerateServiceInterfaceCRUD(Table table)
-    {
-        StringBuilder crud = new StringBuilder();
-
-        string modelName = table.ModelName;
-
-        crud.Append(
-$"    /// <summary>\r\n"+
-$"    /// Gets the {modelName} with the given id.\r\n"+
-$"    /// </summary>\r\n"+
-$"    /// <param name=\"id\"> The id of the looked up {modelName}.</param>\r\n"+
-$"    /// <returns>The {modelName}Dto of the Model with the specified id.</returns>\r\n"+
-$"    {modelName}Dto? Get{modelName}ById(int id);\r\n");
-        crud.Append(
-$"    /// <summary>\r\n" +
-$"    /// Gets all {modelName}s.\r\n" +
-$"    /// </summary>\r\n" +
-$"    /// <returns> A list of all {modelName}Dtos.</returns>\r\n" +
-$"    IEnumerable <{modelName}Dto> GetAll{modelName}s();\r\n");
-        crud.Append(
-$"    /// <summary>\r\n" +
-$"    /// Adds a {modelName} to the database via the Create{modelName}Dto.\r\n"+
-$"    /// </summary>\r\n"+
-$"    /// <param name=\"Create{modelName}Dto\">A Dto to be added to the database. </param>\r\n"+
-$"    /// <returns> The id of the newly created {modelName}. </returns>\r\n"+
-$"    int Add{modelName}(Create{modelName}Dto {modelName.ToLower()});\r\n");
-        crud.Append(
-$"    /// <summary>\r\n" +
-$"    /// Updates a {modelName} of the database via the Update{modelName}Dto.\r\n" +
-$"    /// </summary>\r\n" +
-$"    /// <param name=\"Create{modelName}Dto\">The Dto to be changed in the database. </param>\r\n" +
-$"    /// <returns> Wether or not the update was successful. </returns>\r\n" +
-$"    bool Update{modelName}(int id, Update{modelName}Dto {modelName.ToLower()});\r\n");
-        crud.Append(
-$"    /// <summary>\r\n" +
-$"    /// Deletes a {modelName} with the specified id.\r\n "+
-$"    /// </summary>\r\n"+
-$"    /// <param name=\"id\"> The id of the {modelName} to be deleted. </param>\r\n"+
-$"    /// <returns> Wether or not the deletion was successful. </returns>\r\n"+
-$"    bool Delete{modelName}(int id);\r\n");
-
-        return crud.ToString();
-    }
-}*/
+}

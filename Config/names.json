@@ -1,5 +1,5 @@
 {
-    "ProjectName": "TeamManager",
+    "ProjectName": "SchulnetzAPI",
 
     "APIPartitionName": "WebAPI",
     "LogicPartitionName": "Services",

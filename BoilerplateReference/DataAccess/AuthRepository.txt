@@ -1,4 +1,5 @@
-﻿using $dataAccess#.Model;
+﻿$!={
+using $dataAccess#.Model;
 
 namespace $dataAccess#.Repository;
 
@@ -16,8 +17,9 @@ public class AuthRepository : IAuthRepository
     }
 
     /// <inheritdoc />
-    public $authType#? Get$authType#By$identifer#(string $smallIdentifer#)
+    public $authType#? Get$authType#By$identifer#(string $varIdentifer#)
     {
-        return _db.$dbSetName#.FirstOrDefault(u => u.$identifer# == $smallIdentifer#);
+        return _db.$dbSetName#.FirstOrDefault(u => u.$identifer# == $varIdentifer#); //use Find instead?
     }
 }
+}#

@@ -1,13 +1,14 @@
+$!={
 using $logic#.DTO;
-using $logic#.Service;
+using $logic#.Service; //Folder names
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace $api#.Controllers;
+namespace $api#.Controllers; //Controller Folder name
 
 [ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+[Route("api/[controller]")] // Custom route
+public class AuthController : ControllerBase //Custom Controller Auth 
 {
     private readonly IAuthService _authService;
     
@@ -21,9 +22,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<LoginResponseDto?> Login(LoginRequestDto loginReq)
+    public ActionResult<LoginResponseDto?> Login(LoginRequestDto loginReq) // Custom dto
     {
-        LoginResponseDto? loginRes = _authService.Verify$identifier#(loginReq);
+        LoginResponseDto? loginRes = _authService.Verify$identifier#(loginReq); //Custom verify handling
         return loginRes == null ? Unauthorized() : Ok(loginRes);
     }
 }
+}#

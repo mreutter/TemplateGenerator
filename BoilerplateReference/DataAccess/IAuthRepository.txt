@@ -1,9 +1,11 @@
-﻿using $dataAccess#.Model;
+﻿$!={
+using $dataAccess#.Model;
 
 namespace $dataAccess#.Repository;
 
 public interface IAuthRepository
 {
     //Comment
-    $authType#? Get$authType#By$identifier#(string $smallIdentifer#);
+    $authType#? Get$authType#By$identifier#(string $varIdentifer#);
 }
+}#

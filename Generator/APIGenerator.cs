@@ -1,6 +1,4 @@
-﻿/*using System.Text;
-
-namespace BackendTemplateCreator.Generator;
+﻿namespace BackendTemplateCreator.Generator;
 public class APIGenerator
 {
     private BackendGenerator _g;
@@ -33,200 +31,126 @@ public class APIGenerator
         GeneratorHelper.CopyRenameFile(_templateDirectory, _targetDirectory, "Project.user", _g.APIPartition + ".user");
 
         //csproj -> change
-        string includeAuth = "\r\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"8.0.21\" />";
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "Project.csproj",
             _g.APIPartition + ".csproj",
-            [
-                ("includeAuth",_g.config.UseAuthentification ? includeAuth : ""),
-                ("logic",_g.APIPartition)
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                { "logic",_g.APIPartition}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                { "includeAuth", _g.config.UseAuthentification}
+            }
         );
 
         //appsettings.json -> change
-        string connectionString = $"server={_g.config.DbHost};uid={_g.config.DbUser};pwd={_g.config.DbPassword};database={_g.config.DbName};";
-        string UseDbConnectionString = ",\r\n    \"ConnectionStrings\": {\r\n        \"DefaultConnection\": \"" + connectionString +"\"\r\n    }";
-        string UseJWT = ",\r\n    \"Jwt\": {\r\n        \"Key\": \"" + _g.config.Key + "\",\r\n        \"Issuer\": \"" + _g.config.Issuer + "\",\r\n        \"Audience\": \"" + _g.config.Audience + "\"\r\n    }";
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "appsettings.json",
             "appsettings.json",
-            [
-                ("useDbConnectionString", UseDbConnectionString),
-                ("useAuth",_g.config.UseAuthentification ? UseJWT : "")
-            ]
+            sections: new Dictionary<string, bool>
+            {
+                {"useDBConnectionString", true },
+                { "useAuth", _g.config.UseAuthentification}
+            },
+            sectionParameters: new Dictionary<string, Dictionary<string, string>>
+            {
+                {"useDBConnectionString", new Dictionary<string, string>
+                    {
+                    {"dbHost", _g.config.DbHost},
+                    {"dbUser", _g.config.DbUser},
+                    {"dbPassword", _g.config.DbPassword},
+                    {"dbName", _g.config.DbName}
+                    }
+                },
+                {"useAuth", new Dictionary<string, string>
+                    {
+                    {"key", _g.config.Key},
+                    {"issuer", _g.config.Issuer},
+                    {"audience", _g.config.Audience}
+                    }
+                }
+            }
         );
 
         //.http -> change
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "Project.http",
             _g.APIPartition + ".http",
-            [("api",_g.APIPartition)]
+            parameters: new Dictionary<string, string> {{ "api", _g.APIPartition }}
         );
 
         //Program.cs
-        string includes = "using Microsoft.AspNetCore.Authentication.JwtBearer;\r\nusing Microsoft.IdentityModel.Tokens;\r\nusing System.Text;\r\nusing Microsoft.OpenApi.Models;\r\n";
-
-        string auth =
-@"
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    // Hier konfigurieren wir, WIE ein Token validiert werden soll
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-
-        // Die Werte werden aus der appsettings.json gelesen
-        ValidIssuer = builder.Configuration[""Jwt:Issuer""],
-        ValidAudience = builder.Configuration[""Jwt:Audience""],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration[""Jwt:Key""]
-                ?? throw new InvalidOperationException(""JWT Key is not configured."")))
-    };
-});
-";
-        string buildAddAuth = "\r\nbuilder.Services.AddAuthorization();\r\n";
-        string enableSwaggerAuth = @"options =>
-{
-    options.AddSecurityDefinition(""Bearer"", new OpenApiSecurityScheme
-    {
-        Name = ""Authorization"",
-        Description = ""JWT Authorization header using the Bearer scheme. Enter 'Bearer {token}'"",
-        Type = SecuritySchemeType.Http,
-        Scheme = ""Bearer"",
-        BearerFormat = ""JWT"",
-        In = ParameterLocation.Header
-    });
-
-    // Make Swagger UI use this security definition
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = ""Bearer""
-                }
-            },
-            new string[] {} // An empty array (no specific scopes)
-        }
-    });
-}";
-        string useAuth = "\r\napp.UseAuthentication();\r\n";
-        string useAuthorisation = "app.UseAuthorization();\r\n";
-
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "Program.txt",
             "Program.cs",
-            [
-                ("includes",includes),
-                ("logic",_g.APIPartition),
-                ("auth",auth),
-                ("addAuth",buildAddAuth),
-                ("useAuth",useAuth),
-                ("useAuthorisation",useAuthorisation),
-                ("enableSwaggerAuth", enableSwaggerAuth)
-            ]
+            parameters: new Dictionary<string, string> { { "logic", _g.APIPartition } },
+            sections: new Dictionary<string, bool> 
+            {
+                {"includes",_g.config.UseAuthentification},
+                {"auth", _g.config.UseAuthentification},
+                {"addAuth",_g.config.UseAuthentification},
+                {"useAuth",_g.config.UseAuthentification},
+                {"useAuthorisation",_g.config.UseAuthorisation},
+                {"enableSwaggerAuth", _g.config.UseAuthentification}
+            }
         );
     }
 
-    public void GenerateController(Table table)
+    //Roles and user verification from token 
+    public void GenerateController(int tIndex)
     {
+        Table table = _g.tables[tIndex];
         //Controller Folder
-
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Controllers\\",
             "ModelController.txt",
-            table.ModelName + "Controller.cs",
-            [
-                ("logic",_g.APIPartition),
-                ("api",_g.APIPartition),
-                ("useAuthorisation",_g.config.UseAuthorisation ? "\r\n[Authorize]" : ""),
-                ("modelName",table.ModelName),
-                ("smallModelName",table.ModelName.ToLower()),
-                ("CRUD", xxx ? "\r\n" + GenerateControllerCRUD(table) : "")
-            ]
+            _g.controllerNames[tIndex] + ".cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"logic",_g.logicPartition},
+                {"api",_g.APIPartition},
+                {"controllerName",_g.controllerNames[tIndex]},
+                {"serviceName",_g.serviceNames[tIndex]},
+                {"varServiceName",GeneratorHelper.ToLowerFirst(_g.serviceNames[tIndex])},
+                {"modelName",_g.modelNames[tIndex]},
+                {"varModelName",GeneratorHelper.ToLowerFirst(_g.modelNames[tIndex])}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"useAuthorisation", _g.config.UseAuthorisation},
+                {"comment", true}, //Use Comment?
+                {"getById", table.UseGetById},
+                {"getAll", table.UseGetAll},
+                {"add", table.UseAdd},
+                {"update", table.UseUpdate},
+                {"delete", table.UseDelete}
+            }
         );
     }
 
     public void GenerateAuthController()
     {
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "Controllers\\",
+            _targetDirectory + "Controllers\\", //Custom controller directory
             "AuthController.txt",
-            "AuthController.cs",
-            [
-                ("logic",_g.APIPartition),
-                ("api",_g.APIPartition),
-                ("identifier", _g.config.AuthIdentifer)
-            ]
+            "AuthController.cs", //Custom auth controller name
+            parameters: new Dictionary<string, string>
+            {
+                {"logic",_g.APIPartition },
+                {"api",_g.APIPartition },
+                { "identifier", _g.config.AuthIdentifer }
+            }
         );
     }
-
-    private string GenerateControllerCRUD(Table table)
-    {
-        StringBuilder crud = new StringBuilder();
-        string modelName = table.ModelName;
-        string smallModelName = table.ModelName.ToLower();
-
-        crud.Append(
-"    [HttpGet(\"{id}\")]\r\n" +
-$"    public ActionResult<{modelName}Dto?> Get{modelName}ById(int id)\r\n" +
-"    {\r\n" +
-$"        {modelName}Dto? {smallModelName}Dto = _{smallModelName}Service.Get{modelName}ById(id);\r\n" +
-$"        return {smallModelName}Dto == null ? NotFound() : Ok({smallModelName}Dto);\r\n" +
-"    }\r\n");
-
-        crud.Append(
-"    [HttpGet]\r\n" +
-$"    public ActionResult<IEnumerable<{modelName}Dto>> GetAll{modelName}s()\r\n" +
-"    {\r\n" +
-$"        return Ok(_{smallModelName}Service.GetAll{modelName}s());\r\n" +
-"    }\r\n");
-
-        crud.Append(
-"    [HttpPost]\r\n" +
-$"    public ActionResult Add{modelName}(Create{modelName}Dto {smallModelName})\r\n" +
-"    {\r\n" +
-$"        int id = _{smallModelName}Service.Add{modelName}({smallModelName});\r\n" +
-$"        return CreatedAtAction(nameof(Get{modelName}ById), new {{ id }}, id);\r\n" +
-"    }\r\n");
-
-        crud.Append(
-"    [HttpPut]\r\n" +
-$"    public ActionResult Update{modelName}(int id, Update{modelName}Dto {smallModelName})\r\n" +
-"    {\r\n" +
-$"        return _{smallModelName}Service.Update{modelName}(id, {smallModelName}) ? NoContent() : NotFound();\r\n" +
-"    }\r\n");
-
-        crud.Append(
-"    [HttpDelete]\r\n" +
-$"    public ActionResult Delete{modelName}(int id)\r\n" +
-"    {\r\n" +
-$"        return _{smallModelName}Service.Delete{modelName}(id) ? NoContent() : NotFound();\r\n" +
-"    }\r\n");
-
-        return crud.ToString();
-    }
-}*/
+}

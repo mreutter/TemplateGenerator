@@ -1,22 +1,78 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿$!={
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using $logic#.DTO;
-using $logic#.Service;
+using $logic#.DTO; //Optional Shared Path
+using $logic#.Service; //Custom Folder name
 
-namespace $api#.Controllers;
+namespace $api#.Controllers; //Custom Path
 
-[Route("api/[controller]")]
-[ApiController]$useAuthorisation#
-public class $modelName#Controller : ControllerBase
+[Route("api/[controller]")] //Custom Route
+[ApiController]
+!¬$?useAuthorisation#
+public class $controllerName# : ControllerBase
 {
-    private readonly I$modelName#Service _$smallModelName#Service;
+    private readonly I$serviceName# _$varServiceName#;
 
-    /// <summary>
-    /// Constructor to enable the dependency injection of <see cref="$modelName#Service"/>.
-    /// </summary>
-    /// <param name="$smallModelName#Service">The reference to the $modelName#Service.</param>
-    public $modelName#Controller(I$modelName#Service $smallModelName#Service)
+!¬$?comment#
+    public $controllerName#(I$serviceName# $varServiceName#)
     {
-        _$smallModelName#Service = $smallModelName#Service;
-    }$CRUD#
+        _$varServiceName# = $varServiceName#;
+    }
+!¬$?getById#
+!¬$?getAll#
+!¬$?add#
+!¬$?update#
+!¬$?delete#
 }
+}#
+
+$?useAuthorisation={
+¬[Authorize]
+}#
+
+$?comment={
+    /// <summary>
+    /// Constructor to enable the dependency injection of <see cref="$serviceName#"/>.
+    /// </summary>
+    /// <param name="$varServiceName#">The reference to the $serviceName#.</param>
+!¬}#
+
+$?getById={¬
+    //Comments for all crud
+    [HttpGet("{id}")]
+    public ActionResult<$dtoName#?> Get$modelName#ById(int id)
+    {
+        $dtoName#? $varServiceName# = _$varServiceName#.Get$modelName#ById(id);
+        return $varServiceName# == null ? NotFound() : Ok($varServiceName#);
+    }
+}#
+
+$?getAll={¬
+    [HttpGet]
+    public ActionResult<IEnumerable<$dtoName#>> GetAll$modelName#s()
+    {
+        return Ok(_$varServiceName#.GetAll$modelName#s());
+    }
+}#
+$?add={¬
+    [HttpPost]
+    public ActionResult Add$modelName#(Create$dtoName# {varModelName}) //Should return the created?
+    {
+        int id = _$varServiceName#.Add$modelName#({varModelName});
+        return CreatedAtAction(nameof(Get$modelName#ById), new {{ id }}, id);
+    }
+}#
+$?update={¬
+    [HttpPut] //Id in query here?
+    public ActionResult Update$modelName#(int id, Update$dtoName# {varModelName})
+    {
+        return _$varServiceName#.Update$modelName#(id, {varModelName}) ? NoContent() : NotFound();
+    }
+}#
+$?delete={¬
+    [HttpDelete]
+    public ActionResult Delete$modelName#(int id)
+    {
+        return _$varServiceName#.Delete$modelName#(id) ? NoContent() : NotFound();
+    }
+}#

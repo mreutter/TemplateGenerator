@@ -1,14 +1,14 @@
-﻿/*using System.Text;
+﻿using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class DataAccessGenerator
 {
+    private BackendGenerator _g;
+
     //Local folder scoped directories
     private string _targetDirectory;
     private string _templateDirectory;
 
-    //Refernce to Orchistrator with config & name info
-    private BackendGenerator _g;
     public DataAccessGenerator(BackendGenerator backendGen)
     {
         _g = backendGen;
@@ -28,227 +28,211 @@ public class DataAccessGenerator
         GeneratorHelper.CopyRenameFile(_templateDirectory, _targetDirectory, "Project.csproj", _g.dataAccessPartition + ".csproj");
 
         //DataDependency
-        StringBuilder repoInjections = new();
-        foreach (string repo in _g.repositoryNames)
+        Dictionary<string, string>[] repos = new Dictionary<string, string>[_g.repositoryNames.Length];
+        for (int i = 0; i < _g.repositoryNames.Length; i++)
         {
-            repoInjections.Append($"\r\n        services.AddScoped<I{repo}, {repo}>();");
+            repos[i] = new Dictionary<string, string> { { "repo", _g.repositoryNames[i] } };
         }
 
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "DataDependency.txt",
             _g.names.DataDependencyInjectName + ".cs",
-            [
-                ("dataAccess",_g.dataAccessPartition),
-                ("dbContextName",_g.names.DbContextName),
-                ("dataDependencyInjectName",_g.names.DataDependencyInjectName),
-                ("repoInjections",repoInjections.ToString())
-            ]
+            parameters: new Dictionary<string, string> 
+            {
+                {"dataAccess",_g.dataAccessPartition},
+                {"dbContextName",_g.names.DbContextName},
+                {"dataDependencyInjectName",_g.names.DataDependencyInjectName},
+            },
+            multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"repoInjections", repos}
+            }
         );
 
         //Db
-        StringBuilder DbSets = new();
-        for(int i = 0; i < _g.tables.Count; i++)
+        Dictionary<string, string>[] DbSets = new Dictionary<string, string>[_g.tables.Count];
+        for (int i = 0; i < _g.tables.Count; i++)
         {
-            DbSets.Append("\r\n    //Comment\r\n    public DbSet<" + _g.tables[i].ModelName +"> "+ _g.dbSetNames[i] +" { get; set; }");
+            DbSets[i] = new Dictionary<string, string> 
+            {
+                { "modelName", _g.tables[i].ModelName }, 
+                { "dbSetName", _g.tables[i].DatabaseName }
+            };
         }
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory,
             "DbContext.txt",
             _g.names.DbContextName + ".cs",
-            [
-                ("dataAccess",_g.dataAccessPartition),
-                ("dbContextName",_g.names.DbContextName),
-                ("dbSets",DbSets.ToString())
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess",_g.dataAccessPartition },
+                {"dbContextName",_g.names.DbContextName },
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"comment", true }
+            },
+            multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                { "dbSets", DbSets }
+            }
         );
 
     }
-    
-    public void GenerateModel(Table table)
-    {
-        //Model
-        var properties = new StringBuilder();
 
-        foreach (var col in table.Properties)
+    public void GenerateModel(int tIndex)
+    {
+        Table table = _g.tables[tIndex];
+
+        //Model
+        var dataAnnotationsSB = new StringBuilder();
+        string[] dataAnnotations = new string[table.Properties.Count];
+        for (int i = 0; i < table.Properties.Count; i++)
         {
-            if (col.IsRequired) properties.AppendLine("    [Required]"); //Auto add error message depending on options
+            Property col = table.Properties[i];
+
+            if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column({col.DatabaseName})]");
+
+            if (col.IsRequired) dataAnnotationsSB.AppendLine("    [Required]"); //Auto add error message depending on options
 
             //Option to infer type
             if (_g.config.InferType)
             {
-                if (col.DatabaseName.ToLower().Contains("email")) { properties.AppendLine("    [EmailAddress]"); GeneratorHelper.Warn($"In table {table.ModelName} column {col.DatabaseName} is thought to be an Email Address."); }
-                else if (col.DatabaseName.ToLower().Contains("phone")) {properties.AppendLine("    [Phone]"); GeneratorHelper.Warn($"In table {table.ModelName} column {col.DatabaseName} is thought to be an Phone Number."); }
+                if (col.DatabaseName.ToLower().Contains("email")) { dataAnnotationsSB.AppendLine("    [EmailAddress]"); GeneratorHelper.Warn($"In table \"{table.ModelName}\" column \"{col.DatabaseName}\" is thought to be an Email Address."); }
+                else if (col.DatabaseName.ToLower().Contains("phone")) { dataAnnotationsSB.AppendLine("    [Phone]"); GeneratorHelper.Warn($"In table \"{table.ModelName}\" column \"{col.DatabaseName}\" is thought to be a Phone Number."); }
             }
-             
 
             if (col.Length.HasValue)
-                properties.AppendLine($"    [MaxLength({col.Length.Value})]");
+                dataAnnotationsSB.AppendLine($"    [MaxLength({col.Length.Value})]");
 
             if (col.IsPrimaryKey)
-                properties.AppendLine($"    [Key]");
+                dataAnnotationsSB.AppendLine($"    [Key]");
+            // Also automatically convert fk 1:n (how to detect) relationships into collections
 
-            properties.AppendLine($"    public {col.CSharpType} {col.DatabaseName} {{ get; set; }}\r\n");
+            dataAnnotations[i] = dataAnnotationsSB.ToString();
+            dataAnnotationsSB.Clear();
         }
 
-        GeneratorHelper.StitchReplaceFile(
+        Dictionary<string, string>[] properties = new Dictionary<string, string>[table.Properties.Count];
+        for (int i = 0; i < table.Properties.Count; i++)
+        {
+            properties[i] = new Dictionary<string, string>
+            {
+                { "dataAnnotations", dataAnnotations[i] },
+                { "type", table.Properties[i].CSharpType },
+                { "modelName", table.Properties[i].ModelName }
+            };
+        }
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Model\\",
             "Model.txt",
             $"{table.ModelName}.cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("databaseName", table.ModelName != table.DatabaseName ? $"\r\n[Table(\"{table.ModelName}\")]" : ""),
-                ("modelName", table.ModelName),
-                ("properties", properties.ToString())
-            ]
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition },
+                { "modelName", table.ModelName},
+                { "dbName", table.DatabaseName},
+                { "properties", properties.ToString()}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"databaseName", table.ModelName != table.DatabaseName }
+            }
         );
     }
 
-    public void GenerateRepository(Table table)
+    public void GenerateRepository(int tIndex)
     {
+        Table table = _g.tables[tIndex];
         //Interface
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Repository\\",
             "IModelRepository.txt",
-            $"I{table.ModelName}Repository.cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("modelName", table.ModelName),
-                ("CRUD", xxx ? GenerateRepositoryInterfaceCRUD(table) : "   "),
-            ]
+            $"I{_g.repositoryNames[tIndex]}.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition },
+                { "repoName", _g.repositoryNames[tIndex]}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"getByIdComment", true },
+                {"getAllComment", true },
+                {"addComment", true },
+                {"updateComment", true },
+                {"deleteComment", true },
+
+                {"getById", table.UseGetById},
+                {"getAll", table.UseGetAll},
+                {"add", table.UseAdd},
+                {"update", table.UseUpdate},
+                {"delete", table.UseDelete}
+            }
         );
 
         //Class
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Repository\\",
             "ModelRepository.txt",
-            $"{table.ModelName}Repository.cs", // Replace name
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("modelName", table.ModelName),
-                ("dbContextName", _g.names.DbContextName),
-                ("dbSetName", _g.dbSetNames[tableIndex]),
-                ("CRUD", xxx ? GenerateRepositoryClassCRUD(table) : ""),
-            ]
+            $"{_g.repositoryNames[tIndex]}.cs", // Replace name
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition},
+                {"repoName", _g.repositoryNames[tIndex]},
+                {"dbContextName", _g.names.DbContextName},
+                {"modelName", table.ModelName},
+                {"dbSetName", _g.dbSetNames[tIndex]}
+            },
+            sections: new Dictionary<string, bool>
+            {
+                {"comment", true },
+                {"getById", table.UseGetById},
+                {"getAll", table.UseGetAll},
+                {"add", table.UseAdd},
+                {"update", table.UseUpdate},
+                {"delete", table.UseDelete}
+            }
         );
     }
 
     public void GenerateAuthRepository()
     {
         //Interface
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Repository\\",
             "IAuthRepository.txt",
-            $"IAuthRepository.cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("authType", _g.config.AuthType),
-                ("identifier", _g.config.AuthIdentifer),
-                ("smallIdentifer", _g.config.AuthIdentifer.ToLower())
-            ]
+            "IAuthRepository.cs", //Consistent custom auth name
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition },
+                {"authType", _g.config.AuthType},
+                {"identifier", _g.config.AuthIdentifer},
+                {"varIdentifer", GeneratorHelper.ToLowerFirst(_g.config.AuthIdentifer)}
+            }
         );
 
         //class
-        GeneratorHelper.StitchReplaceFile(
+        GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Repository\\",
             "AuthRepository.txt",
-            $"AuthRepository.cs",
-            [
-                ("dataAccess", _g.dataAccessPartition),
-                ("authType", _g.config.AuthType),
-                ("dbContextName", _g.names.DbContextName),
-                ("identifer", _g.config.AuthIdentifer),
-                ("smallIdentifer", _g.config.AuthIdentifer.ToLower()),
-                ("dbSetName", _g.config.AuthDbSetName)
-            ]
+            "AuthRepository.cs",
+            parameters: new Dictionary<string, string>
+            {
+                {"dataAccess", _g.dataAccessPartition},
+                {"authType", _g.config.AuthType},
+                {"dbContextName", _g.names.DbContextName},
+                {"identifer", _g.config.AuthIdentifer},
+                {"varIdentifer", GeneratorHelper.ToLowerFirst(_g.config.AuthIdentifer)},
+                {"dbSetName", _g.config.AuthDbSetName }
+            }
         );
     }
-
-    private string GenerateRepositoryClassCRUD(Table table)
-    {
-        StringBuilder crud = new StringBuilder();
-        string comment = "\r\n   /// <inheritdoc />\r\n";
-
-        crud.Append(
-            comment +
-            $"   public {table.ModelName}? Get{table.ModelName}ById(int id)\r\n" +
-            "   {\r\n" +
-            $"       return _db.{_g.dbSetNames[tableIndex]}.Find(id);\r\n" +
-            "   }\r\n");
-        crud.Append(
-            comment +
-            $"   public IEnumerable<{table.ModelName}> GetAll{table.ModelName}s()\r\n" +
-            "   {\r\n" +
-            $"       return _db.{_g.dbSetNames[tableIndex]}.ToList();\r\n" +
-            "   }\r\n");
-        crud.Append(
-            comment +
-            $"   public void Add{table.ModelName}({table.ModelName} new{table.ModelName})\r\n" +
-            "   {\r\n" +
-            $"       _db.{_g.dbSetNames[tableIndex]}.Add(new{table.ModelName});\r\n" +
-            "       _db.SaveChanges();\r\n" +
-            "   }\r\n");
-        crud.Append(
-            comment +
-            $"   public void Update{table.ModelName}({table.ModelName} update{table.ModelName})\r\n" +
-            "   {\r\n" +
-            $"       _db.{_g.dbSetNames[tableIndex]}.Update(update{table.ModelName});\r\n" +
-            "       _db.SaveChanges();\r\n" +
-            "   }\r\n");
-        crud.Append(
-            comment +
-            $"   public void Delete{table.ModelName}({table.ModelName} remove{table.ModelName})\r\n" +
-            "   {\r\n" +
-            $"       _db.{_g.dbSetNames[tableIndex]}.Remove(remove{table.ModelName});\r\n" +
-            "       _db.SaveChanges();\r\n" +
-            "   }\r\n");
-
-        return crud.ToString();
-    }
-
-    private string GenerateRepositoryInterfaceCRUD(Table table)
-    {
-        StringBuilder crud = new StringBuilder();
-
-        crud.Append(
-            "   /// <summary>\r\n" +
-            $"   /// Gets the {table.ModelName} with a specifed Id.\r\n" +
-            "   /// </summary>\r\n" +
-            $"   /// <param name=\"id\"> The Id of the {table.ModelName} to get. </param>\r\n" +
-            $"   /// <returns> The {table.ModelName} model with the specified Id. </returns>\r\n" +
-            $"   public {table.ModelName}? Get{table.ModelName}ById(int id);\r\n");
-        crud.Append(
-            "   /// <summary>\r\n" +
-            $"   /// Gets all {table.ModelName}s.\r\n" +
-            "   /// </summary>\r\n" +
-            $"   /// <returns> A list of {table.ModelName} models. </returns>\r\n" +
-            $"   public IEnumerable<{table.ModelName}> GetAll{table.ModelName}s();\r\n");
-        crud.Append(
-            "   /// <summary>\r\n" +
-            $"   /// Adds the given model to the Database.\r\n" +
-            "   /// </summary>\r\n" +
-            $"   /// <param name=\"new{table.ModelName}\"> The {table.ModelName} to get added. </param>\r\n" +
-            $"   public void Add{table.ModelName}({table.ModelName} new{table.ModelName});\r\n");
-        crud.Append(
-            "   /// <summary>\r\n" +
-            $"   /// Updates the given {table.ModelName} with its new values.\r\n" +
-            "   /// </summary>\r\n" +
-            $"   /// <param name=\"update{table.ModelName}\"> The {table.ModelName} containing the updated values. </param>\r\n" +
-            $"   public void Update{table.ModelName}({table.ModelName} update{table.ModelName});\r\n");
-        crud.Append(
-            "   /// <summary>\r\n" +
-            $"   /// Deletes the given {table.ModelName}.\r\n" +
-            "   /// </summary>\r\n" +
-            $"   /// <param name=\"remove{table.ModelName}\"> The {table.ModelName} to remove. </param>\r\n" +
-            $"   public void Delete{table.ModelName}({table.ModelName} remove{table.ModelName});\r\n");
-
-        return crud.ToString();
-    }
-}*/
+}
