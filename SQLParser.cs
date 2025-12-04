@@ -98,7 +98,8 @@ public class SQLParser
             "tinyint" => "byte", //Might map to bool if tinyint(1)
             "bit" => "bool",
             "decimal" or "numeric" => "decimal",
-            "float" or "real" => "double",
+            "double" => "double",
+            "float" or "real" => "float",
             "date" => "DateOnly",
             "datetime" or "timestamp" => "DateTime",
             "nvarchar" or "varchar" or "text" or "char" => "string",

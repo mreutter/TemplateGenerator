@@ -10,7 +10,7 @@ public class $dbContextName# : DbContext
     public $dbContextName#(DbContextOptions<$dbContextName#> options) :
         base(options)
     { }
-$dbSets#
+$?*dbSets#
 }
 }#
 

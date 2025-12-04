@@ -38,7 +38,7 @@ public class APIGenerator
             _g.APIPartition + ".csproj",
             parameters: new Dictionary<string, string>
             {
-                { "logic",_g.APIPartition}
+                { "logic",_g.logicPartition}
             },
             sections: new Dictionary<string, bool>
             {
@@ -55,7 +55,7 @@ public class APIGenerator
             sections: new Dictionary<string, bool>
             {
                 {"useDBConnectionString", true },
-                { "useAuth", _g.config.UseAuthentification}
+                { "useAuthentication", _g.config.UseAuthentification}
             },
             sectionParameters: new Dictionary<string, Dictionary<string, string>>
             {
@@ -67,7 +67,7 @@ public class APIGenerator
                     {"dbName", _g.config.DbName}
                     }
                 },
-                {"useAuth", new Dictionary<string, string>
+                {"useAuthentication", new Dictionary<string, string>
                     {
                     {"key", _g.config.Key},
                     {"issuer", _g.config.Issuer},
@@ -92,15 +92,15 @@ public class APIGenerator
             _targetDirectory,
             "Program.txt",
             "Program.cs",
-            parameters: new Dictionary<string, string> { { "logic", _g.APIPartition } },
+            parameters: new Dictionary<string, string> { { "logic", _g.logicPartition } },
             sections: new Dictionary<string, bool> 
             {
                 {"includes",_g.config.UseAuthentification},
-                {"auth", _g.config.UseAuthentification},
-                {"addAuth",_g.config.UseAuthentification},
-                {"useAuth",_g.config.UseAuthentification},
-                {"useAuthorisation",_g.config.UseAuthorisation},
-                {"enableSwaggerAuth", _g.config.UseAuthentification}
+                { "declareAuthentication", _g.config.UseAuthentification },
+                { "useAuthentication", _g.config.UseAuthentification},
+                { "addAuthorisation", _g.config.UseAuthentification },
+                { "useAuthorisation", _g.config.UseAuthorisation },
+                { "enableSwaggerAuth", _g.config.UseAuthorisation }
             }
         );
     }
@@ -119,11 +119,12 @@ public class APIGenerator
             {
                 {"logic",_g.logicPartition},
                 {"api",_g.APIPartition},
-                {"controllerName",_g.controllerNames[tIndex]},
+                {"controllerName",_g.names.ControllerSuffix == "Controller" ? _g.modelNames[tIndex] : _g.controllerNames[tIndex]},
                 {"serviceName",_g.serviceNames[tIndex]},
                 {"varServiceName",GeneratorHelper.ToLowerFirst(_g.serviceNames[tIndex])},
                 {"modelName",_g.modelNames[tIndex]},
-                {"varModelName",GeneratorHelper.ToLowerFirst(_g.modelNames[tIndex])}
+                {"varModelName",GeneratorHelper.ToLowerFirst(_g.modelNames[tIndex])},
+                {"dtoName", _g.dtoNames[tIndex]}
             },
             sections: new Dictionary<string, bool>
             {

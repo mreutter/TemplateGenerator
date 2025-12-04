@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddServiceLayer(builder.Configuration);
 !¬
-!¬$?auth#
-!¬$?addAuth#
+!¬$?declareAuthentication#
+!¬$?addAuthorisation#
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen($?enableSwaggerAuth#);
@@ -24,8 +24,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 !¬
-!¬$useAuth#
-!¬$useAuthorisation#
+!¬$?useAuthentication#
+!¬$?useAuthorisation#
 
 app.MapControllers();
 
@@ -39,7 +39,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 }#
 
-$?auth={
+$?declareAuthentication={
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -56,24 +56,24 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
 
-        ValidIssuer = builder.Configuration[""Jwt:Issuer""],
-        ValidAudience = builder.Configuration[""Jwt:Audience""],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration[""Jwt:Key""]
-                ?? throw new InvalidOperationException(""JWT Key is not configured."")))
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]
+                ?? throw new InvalidOperationException("JWT Key is not configured.")))
     };
 });
 }#
 
-$?addAuth{¬
+$?addAuthorisation={¬
 builder.Services.AddAuthorization();
 }#
 
-$?useAuth={¬
+$?useAuthentication={¬
 app.UseAuthentication();
 }#
 
-$?useAuthorisation{
+$?useAuthorisation={
 app.UseAuthorization();
 }#
 

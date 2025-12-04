@@ -22,4 +22,4 @@ $?*serviceInjections#
 
 $?*serviceInjections={
     services.AddScoped<I$%service#, $%service#>();
-}
+}#

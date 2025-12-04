@@ -12,13 +12,13 @@
 
     "DtoSuffix": "Dto",
     "ModelSuffix": "",
+    "ControllerSuffix": "Controller",
     "ServiceSuffix": "Service",
     "RepositorySuffix": "Repository",
     "DbSetSuffix": "s",
 
-    "apiURLExtension": "api",
+    "URLRoute": "api",
     "DbContextName": "DBContext",
-    "DataDependencyPrefix": "Data",
-    "LogicDependencyPrefix": "Logic",
-    "DependencyInjectionSuffix": "Dependency"
+    "DataDependencyInjectName": "DataAccessDependency",
+    "LogicDependencyInjectName": "ServiceDependency"
 }

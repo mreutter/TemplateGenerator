@@ -27,8 +27,7 @@ public class $controllerName# : ControllerBase
 }#
 
 $?useAuthorisation={
-¬[Authorize]
-}#
+¬[Authorize]}#
 
 $?comment={
     /// <summary>
@@ -56,17 +55,17 @@ $?getAll={¬
 }#
 $?add={¬
     [HttpPost]
-    public ActionResult Add$modelName#(Create$dtoName# {varModelName}) //Should return the created?
+    public ActionResult Add$modelName#(Create$dtoName# $varModelName#) //Should return the created?
     {
-        int id = _$varServiceName#.Add$modelName#({varModelName});
-        return CreatedAtAction(nameof(Get$modelName#ById), new {{ id }}, id);
+        int id = _$varServiceName#.Add$modelName#($varModelName#);
+        return CreatedAtAction(nameof(Get$modelName#ById), new { id }, id);
     }
 }#
 $?update={¬
     [HttpPut] //Id in query here?
-    public ActionResult Update$modelName#(int id, Update$dtoName# {varModelName})
+    public ActionResult Update$modelName#(int id, Update$dtoName# $varModelName#)
     {
-        return _$varServiceName#.Update$modelName#(id, {varModelName}) ? NoContent() : NotFound();
+        return _$varServiceName#.Update$modelName#(id, $varModelName#) ? NoContent() : NotFound();
     }
 }#
 $?delete={¬

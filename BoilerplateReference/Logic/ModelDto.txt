@@ -10,6 +10,6 @@ $?*properties#
 }#
 
 $?*properties={
-	$%dataAnnotations#
-    public $%type# $%identifier# { get; set; }
-}
+$%dataAnnotations#
+!¬    public $%type# $%identifier# { get; set; }¬
+}#

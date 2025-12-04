@@ -16,5 +16,5 @@ $?databaseName={¬
 
 $?*properties={
 $%dataAnnotations#
-    public $%type# $%modelName# { get; set; }
+!¬    public $%type# $%identifier# { get; set; }¬
 }#

@@ -1,7 +1,7 @@
 {
     "Directory": "C:/Users/reuttem1/Desktop/Templates/",
 
-    "DbName": "DbName",
+    "DbName": "Schulnetz",
     "DbHost": "localhost",
     "DbUser": "root",
     "DbPassword": "Init1234",
@@ -19,10 +19,10 @@
     "CORSAllowIP": "",
 
     "AuthType": "Person",
-    "AuthIdentifer": "Username",
-    "AuthDbSetName": "Persons",
+    "AuthIdentifer": "Email",
+    "AuthDbSetName": "implementTeacher / VicePrincipal either or",
 
     "Key": "",
-    "Issuer": "https://my-api.com",
-    "Audience": "https://my-api.com"
+    "Issuer": "https://schulnetz-api.com",
+    "Audience": "https://schulnetz-api.com"
 }

@@ -17,6 +17,6 @@ $!={
 
 </Project>}#
 
-$?includeAuth={
-  <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"8.0.21\" />
+$?includeAuth={¬
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" />
 }#

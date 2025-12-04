@@ -163,7 +163,7 @@ public class GeneratorHelper
                         return;
                     }
                     string definition = multipleSectionDefinitionMap[sectionIdentifier];
-                    if (multipleSectionParameters != null && multipleSectionParameters.ContainsKey(sectionIdentifier))
+                    if (multipleSectionParameters != null)
                     {
                         foreach (var p in multipleSectionParameters[sectionIdentifier])
                         {
@@ -180,9 +180,6 @@ public class GeneratorHelper
                             }
                             filledSection.Append(str);
                         }
-                    } else
-                    {
-
                     }
                 }
                 else if (sections.ContainsKey(sectionIdentifier) && sectionDefinitionMap.ContainsKey(sectionIdentifier)) //Section (Could also regex.replace beforehand)
@@ -207,15 +204,16 @@ public class GeneratorHelper
                     else filledSection.Append(definition);
                 } else
                 {
-                    Error($"Couldnt find section identifier \"{sectionIdentifier}\" in the Template: \"{templateName}\" while generating \"{projectName}\".", false);
+                    Error($"Couldnt find parameter for \"{sectionIdentifier}\" in the Template: \"{templateName}\" while generating \"{projectName}\".", false);
                     Warn($"Skipping generation of {projectName}");
                     return;
                 }
 
-                    //Add Section and definitive part
-                    sectionInjectContent.Append(sectionSplitContent[i]);
+                //Add Section and definitive part
+                sectionInjectContent.Append(sectionSplitContent[i]);
                 sectionInjectContent.Append(filledSection.ToString());
             }
+            sectionInjectContent.Append(sectionSplitContent.Last());
             
             //Combine Parts
             combinedContent = string.Join("", sectionInjectContent);

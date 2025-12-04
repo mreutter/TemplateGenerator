@@ -58,7 +58,7 @@ public class DataAccessGenerator
             DbSets[i] = new Dictionary<string, string> 
             {
                 { "modelName", _g.tables[i].ModelName }, 
-                { "dbSetName", _g.tables[i].DatabaseName }
+                { "dbSetName", _g.dbSetNames[i] }
             };
         }
         GeneratorHelper.TemplateReplacer(
@@ -94,7 +94,7 @@ public class DataAccessGenerator
         {
             Property col = table.Properties[i];
 
-            if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column({col.DatabaseName})]");
+            if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column(\"{col.DatabaseName}\")]");
 
             if (col.IsRequired) dataAnnotationsSB.AppendLine("    [Required]"); //Auto add error message depending on options
 
@@ -123,7 +123,7 @@ public class DataAccessGenerator
             {
                 { "dataAnnotations", dataAnnotations[i] },
                 { "type", table.Properties[i].CSharpType },
-                { "modelName", table.Properties[i].ModelName }
+                { "identifier", table.Properties[i].ModelName }
             };
         }
         GeneratorHelper.TemplateReplacer(
@@ -134,13 +134,17 @@ public class DataAccessGenerator
             parameters: new Dictionary<string, string>
             {
                 {"dataAccess", _g.dataAccessPartition },
-                { "modelName", table.ModelName},
-                { "dbName", table.DatabaseName},
+                { "modelName", table.ModelName },
+                { "dbName", table.DatabaseName },
                 { "properties", properties.ToString()}
             },
             sections: new Dictionary<string, bool>
             {
                 {"databaseName", table.ModelName != table.DatabaseName }
+            },
+            multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"properties", properties }
             }
         );
     }
@@ -157,7 +161,8 @@ public class DataAccessGenerator
             parameters: new Dictionary<string, string>
             {
                 {"dataAccess", _g.dataAccessPartition },
-                { "repoName", _g.repositoryNames[tIndex]}
+                { "repoName", _g.repositoryNames[tIndex]},
+                {"modelName", table.ModelName }
             },
             sections: new Dictionary<string, bool>
             {
@@ -185,8 +190,8 @@ public class DataAccessGenerator
             {
                 {"dataAccess", _g.dataAccessPartition},
                 {"repoName", _g.repositoryNames[tIndex]},
-                {"dbContextName", _g.names.DbContextName},
                 {"modelName", table.ModelName},
+                {"dbContextName", _g.names.DbContextName},
                 {"dbSetName", _g.dbSetNames[tIndex]}
             },
             sections: new Dictionary<string, bool>

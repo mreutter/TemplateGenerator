@@ -24,7 +24,7 @@ public class $repoName# : I$repoName#
 }
 }#
 
-$?comment={
+$?comment={¬
     /// <inheritdoc />
 }#
 

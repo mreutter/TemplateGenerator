@@ -137,8 +137,15 @@ public class BackendGenerator
         for (int i = 0; i < tablesCount; i++)
         {
             if (tables[i].ModelName == "") tables[i].ModelName = tables[i].DatabaseName;
+
+            for(int j = 0; j < tables[i].Properties.Count; j++)
+            {
+                Property prop = tables[i].Properties[j];
+                prop.ModelName = prop.ModelName == "" ? prop.DatabaseName : prop.ModelName;
+            }
+
             dtoNames[i] = tables[i].ModelName + names.DtoSuffix;
-            modelNames[i] = tables[i].ModelName + names.ModelSuffix;
+            modelNames[i] = tables[i].ModelName + names.ModelSuffix; 
             dbSetNames[i] = tables[i].ModelName + names.DbSetSuffix; // if is any other than "" need to use Table alias
             repositoryNames[i] = tables[i].ModelName + names.RepositorySuffix;
             serviceNames[i] = tables[i].ModelName + names.ServiceSuffix;

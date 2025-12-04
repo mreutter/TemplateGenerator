@@ -28,7 +28,7 @@ public class LogicGenerator
             _templateDirectory,
             _targetDirectory,
             "Project.csproj",
-            _g.logicPartition,
+            _g.logicPartition + ".csproj",
             parameters: new Dictionary<string, string>
             {
                 {"dataAccess", _g.dataAccessPartition}
@@ -135,8 +135,6 @@ public class LogicGenerator
 
             if (!col.IsDtoProperty) continue;
 
-            if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column({col.DatabaseName})]");
-
             if (col.IsRequired) dataAnnotationsSB.AppendLine("    [Required]"); //Auto add error message depending on options
 
             //Option to infer type
@@ -164,7 +162,7 @@ public class LogicGenerator
             {
                 { "dataAnnotations", dataAnnotations[i] },
                 { "type", table.Properties[i].CSharpType },
-                { "modelName", table.Properties[i].ModelName }
+                { "identifier", table.Properties[i].ModelName }
             };
         }
         GeneratorHelper.TemplateReplacer(
@@ -176,7 +174,6 @@ public class LogicGenerator
             {
                 {"logic", _g.logicPartition},
                 {"dtoName", _g.dtoNames[tIndex]},
-                {"properties", properties.ToString()}
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
                 {"properties", properties}

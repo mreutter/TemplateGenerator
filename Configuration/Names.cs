@@ -23,6 +23,8 @@ public class Names
     public string ControllerSuffix { get; set; }
     public string DbSetSuffix { get; set; }
 
+
+    //To implement
     public bool UpperCaseClass { get; set; }
     public bool LowerCaseVariable { get; set; } 
 
