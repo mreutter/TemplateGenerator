@@ -111,7 +111,11 @@ public class GeneratorHelper
         if (!Directory.Exists(destination)) Directory.CreateDirectory(destination);
 
         string fileContent = TryRead(source + templateName, projectName);
-        if (fileContent == null) { Info($"Skipping creation of {projectName}."); return; }
+        if (fileContent == null) {
+            Error($"Couldnt read contents of \"{templateName}\"", false);
+            Warn($"Skipping creation of \"{projectName}\".");
+            return;
+        }
 
         //Extract Definition
         var definitiveSectionDefinition = Regex.Match(fileContent, @"\$!=\s*\{(?:\r\n|\n)?([\s\S]*?)\}#");
@@ -137,8 +141,8 @@ public class GeneratorHelper
             //Max Recursion to avoid infinite cycle
             if (++recursion > 10)
             {
-                Error($"Exceeded Max Recursion level in {projectName}.", false);
-                Info($"Skipping generation of {projectName}.");
+                Error($"Exceeded Max Recursion level in \"{projectName}\".", false);
+                Warn($"Skipping generation of \"{projectName}\".");
                 return;
             }
 
@@ -175,6 +179,7 @@ public class GeneratorHelper
                             }
                             catch (Exception e)
                             {
+                                Error($"Couldnt replace local parameter \"{p}\" in multipleSection \"{sectionIdentifier}\" in file \"{projectName}\".", false);
                                 Warn($"Skipping generation of \"{projectName}\".");
                                 return;
                             }

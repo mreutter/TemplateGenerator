@@ -77,7 +77,8 @@ public class LogicGenerator
                 {"logic", _g.logicPartition },
                 {"serviceName", _g.serviceNames[tIndex]},
                 {"modelName", _g.modelNames[tIndex]},
-                {"dtoName", _g.dtoNames[tIndex]}
+                {"dtoName", _g.dtoNames[tIndex]},
+                {"varModelName", GeneratorHelper.ToLowerFirst(_g.modelNames[tIndex])}
             },
             sections: new Dictionary<string, bool>
             {
@@ -95,6 +96,13 @@ public class LogicGenerator
             }
         );
         //Service
+        List<Dictionary<string, string>> conversionLines = new List<Dictionary<string, string>>();
+        for (int i = 0; i < table.Properties.Count; i++)
+        {
+            if (!table.Properties[i].IsDtoProperty) continue;
+            conversionLines.Add(new Dictionary<string, string> { { "property", table.Properties[i].ModelName } });
+        }
+
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "Service\\",
@@ -120,6 +128,9 @@ public class LogicGenerator
                 { "add", table.UseAdd },
                 { "update", table.UseUpdate },
                 { "delete", table.UseDelete },
+            }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
+            {
+                {"conversion", conversionLines.ToArray()}
             }
         );
     }
@@ -155,16 +166,20 @@ public class LogicGenerator
             dataAnnotationsSB.Clear();
         }
 
-        Dictionary<string, string>[] properties = new Dictionary<string, string>[table.Properties.Count];
+        List<Dictionary<string, string>> properties = new List<Dictionary<string, string>>();
         for (int i = 0; i < table.Properties.Count; i++)
         {
-            properties[i] = new Dictionary<string, string>
+            Property property = table.Properties[i];
+            if (!property.IsDtoProperty) continue;
+            properties.Add(new Dictionary<string, string>
             {
                 { "dataAnnotations", dataAnnotations[i] },
-                { "type", table.Properties[i].CSharpType },
-                { "identifier", table.Properties[i].ModelName }
-            };
+                { "type", property.CSharpType },
+                { "identifier", property.ModelName }
+            });
         }
+        Dictionary<string,string>[] propertiesArray = properties.ToArray();
+
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
             _targetDirectory + "DTO\\",
@@ -176,7 +191,7 @@ public class LogicGenerator
                 {"dtoName", _g.dtoNames[tIndex]},
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"properties", properties}
+                {"properties", propertiesArray}
             }
         );
 
@@ -192,7 +207,7 @@ public class LogicGenerator
                 {"properties", properties.ToString()}
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"properties", properties}
+                {"properties", propertiesArray}
             }
         );
 
@@ -208,7 +223,7 @@ public class LogicGenerator
                 {"properties", properties.ToString()}
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"properties", properties}
+                {"properties", propertiesArray}
             }
         );
     }
@@ -223,7 +238,7 @@ public class LogicGenerator
             parameters: new Dictionary<string, string>
             {
                 {"logic", _g.logicPartition },
-                { "identifier", _g.config.AuthIdentifer }
+                {"identifier", _g.config.AuthIdentifer }
             }
         );
         GeneratorHelper.TemplateReplacer(

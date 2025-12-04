@@ -11,5 +11,5 @@ $?*properties#
 
 $?*properties={
 $%dataAnnotations#
-!¬    public $%type# $%identifier# { get; set; }¬
+!¬    public $%type# $%identifier# { get; set; }
 }#

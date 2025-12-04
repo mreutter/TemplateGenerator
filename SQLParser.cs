@@ -73,13 +73,15 @@ public class SQLParser
 
 
             bool isNullable = !line.Contains("NOT NULL", StringComparison.OrdinalIgnoreCase) && !line.Contains("AUTO_INCREMENT", StringComparison.OrdinalIgnoreCase);
+            bool isPrimaryKey = line.Contains("PRIMARY KEY", StringComparison.OrdinalIgnoreCase);
             var column = new Property
             {
                 DatabaseName = match.Groups[1].Value,
                 CSharpType = MapSqlTypeToCSharp(match.Groups[2].Value, isNullable),
                 Length = int.TryParse(match.Groups[3].Value, out int len) ? len : (int?)null,
                 IsRequired = line.Contains("NOT NULL", StringComparison.OrdinalIgnoreCase),
-                IsPrimaryKey = line.Contains("PRIMARY KEY", StringComparison.OrdinalIgnoreCase)
+                IsPrimaryKey = isPrimaryKey,
+                IsDtoProperty = !isPrimaryKey //Standard to not show Id in DTO
             };
 
             columns.Add(column);

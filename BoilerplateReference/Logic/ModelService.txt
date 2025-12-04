@@ -18,15 +18,15 @@ public class $serviceName# : I$serviceName#
     {
         return new $dtoName#
         {
-            //Conversion to Dto
+$?*conversion#
         };
     }
 
-    private $modelName# ToModel($dtoName# $varModelName#)
+    private $modelName# ToModel(Create$dtoName# $varModelName#)
     {
         return new $modelName#
         {
-            //Conversion to Model
+$?*conversion#
         };
     }
 !¬$?getById#
@@ -91,4 +91,8 @@ $?delete={
         _$varRepoName#.Delete$modelName#($varModelName#);
         return true;
     }
+}#
+
+$?*conversion={
+        $%property# = $varModelName#.$%property#,
 }#

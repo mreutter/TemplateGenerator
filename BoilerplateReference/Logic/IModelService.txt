@@ -17,7 +17,7 @@ $?commentGetById={
     /// <summary>
     /// Gets the $modelName# with the given id.
     /// </summary>
-    /// <param name=\"id\"> The id of the looked up $modelName#.</param>
+    /// <param name="id"> The id of the looked up $modelName#.</param>
     /// <returns>The $dtoName# of the Model with the specified id.</returns>
 }#
 
@@ -32,7 +32,7 @@ $?commentAdd={
     /// <summary>
     /// Adds a $modelName# to the database via the Create$dtoName#.
     /// </summary>
-    /// <param name=\"Create$dtoName#\">A Dto to be added to the database. </param>
+    /// <param name="Create$dtoName#">A Dto to be added to the database. </param>
     /// <returns> The id of the newly created $modelName#. </returns>
 }#
 
@@ -40,7 +40,7 @@ $?commentUpdate={
     /// <summary>
     /// Updates a $modelName# of the database via the Update$dtoName#.
     /// </summary>
-    /// <param name=\"Create$dtoName#\">The Dto to be changed in the database. </param>
+    /// <param name="Create$dtoName#">The Dto to be changed in the database. </param>
     /// <returns> Whether or not the update was successful. </returns>
 }#
 
@@ -48,32 +48,32 @@ $?commentDelete={
     /// <summary>
     /// Deletes a $modelName# with the specified id.
     /// </summary>
-    /// <param name=\"id\"> The id of the $modelName# to be deleted. </param>
+    /// <param name="id"> The id of the $modelName# to be deleted. </param>
     /// <returns> Wether or not the deletion was successful. </returns>
 }#
 
 
 $?getById={
-    $?commentGetById#
+$?commentGetById#
     $dtoName#? Get$modelName#ById(int id);
 }#
 
 $?getAll={
-    $?commentGetAll#
+$?commentGetAll#
     IEnumerable<$dtoName#> GetAll$modelName#s();
 }#
 
 $?add={
-    $?commentAdd#
-    int Add$modelName#(Create$dtoName# {modelName.ToLower()});
+$?commentAdd#
+    int Add$modelName#(Create$dtoName# $varModelName#);
 }#
 
 $?update={
-    $?commentUpdate#
-    bool Update$modelName#(int id, Update$dtoName# {modelName.ToLower()});
+$?commentUpdate#
+    bool Update$modelName#(int id, Update$dtoName# $varModelName#);
 }#
 
 $?delete={
-    $?commentDelete#
+$?commentDelete#
     bool Delete$modelName#(int id);
 }#

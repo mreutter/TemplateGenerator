@@ -23,6 +23,6 @@ $?*repoInjections#
 }
 }#
 
-$?*repoInjections={
+$?*repoInjections={¬
         services.AddScoped<I$%repo#, $%repo#>();
-}#
+!¬}#
