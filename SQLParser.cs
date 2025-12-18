@@ -1,6 +1,7 @@
 ﻿using BackendTemplateCreator.Generator;
 using System.Text.RegularExpressions;
 using System.Text;
+using Spectre.Console;
 
 namespace BackendTemplateCreator;
 
@@ -25,6 +26,54 @@ public class SQLParser
         foreach (Match m in tableMatches)
         {
             yield return m.Value;
+        }
+    }
+
+    public enum CardinalityEnum {
+        OneToOne,
+        OneToMany, // {Nothing} -> ICollection<Product> (Only if ManyToOne exists)
+        ManyToOne // ProductId -> Product
+    };
+    //Origin Table and Foreign key are known and therefore omitted
+    public class ForeignKeyReference
+    {
+        public string ReferencedTable { get; set; }
+        public string ReferencedKey { get; set; }
+        public CardinalityEnum Cardinality { get; set; } //From Perspective of table -> There is no many to one since other side wouldnt keep a reference
+    }
+
+    //Graph Problem
+    public static Dictionary<(string,string),Property> ForeignKeys = new();
+    public static void AdjustCardinality(List<Table> tables)
+    {
+        Dictionary<(string, string), Property> referencedProperties = new(); 
+        //Only changes references so no need for return
+        foreach (var tableAndProperty in ForeignKeys.Keys)
+        {
+            var property = ForeignKeys[tableAndProperty];
+            var fkr = property.ForeignKeyReference;
+            (string, string) reference = (fkr.ReferencedTable, fkr.ReferencedKey);
+
+            if (ForeignKeys.ContainsKey(reference))
+            {
+                //One to one on both
+                property.ForeignKeyReference.Cardinality = CardinalityEnum.OneToOne;
+                ForeignKeys[reference].ForeignKeyReference.Cardinality = CardinalityEnum.OneToOne;
+            } else
+            {
+                //Set i.cardinality to one to many
+                property.ForeignKeyReference.Cardinality = CardinalityEnum.OneToMany;
+                //Set referece.cardinalty to many to one
+
+
+                Property referencedProperty = tables.Find(t => t.DatabaseName == reference.Item1).Properties.Find(p => p.DatabaseName == reference.Item2); //Is this reference or pointer?
+                if(referencedProperty == null)
+                {
+                    GeneratorHelper.Error($"Couldnt find \"{reference.Item2}\" of table \"{reference.Item1}\" referenced by \"{tableAndProperty.Item2}\" of table \"{tableAndProperty.Item1}\".", true, "SQL ");
+                }
+                referencedProperty.ForeignKeyReference = new ForeignKeyReference() { ReferencedTable=tableAndProperty.Item1, ReferencedKey=tableAndProperty.Item2, Cardinality=CardinalityEnum.ManyToOne };
+                referencedProperty.IsForeignKey = true; //Meaning its referenced from somewhere else
+            }
         }
     }
 
@@ -67,6 +116,17 @@ public class SQLParser
                 string[] referencedTableAndId = words[4].Split('(');
                 string referencedTable = referencedTableAndId[0];
                 string referencedId = referencedTableAndId[1].Replace(")", "");
+
+
+                //Supposes Foreign Key Declarations are at end
+                Property foreignKeyProperty = columns.Find(i => i.DatabaseName == foreignKey);
+                if (foreignKeyProperty == null) GeneratorHelper.Error($"Foreign Key Refence \"{foreignKey}\" in \"{tableName}\" is invalid."); //Fatal
+
+                foreignKeyProperty.IsForeignKey = true;
+                foreignKeyProperty.ForeignKeyReference = new ForeignKeyReference() { ReferencedTable = referencedTable, ReferencedKey = referencedId };
+
+                ForeignKeys[(tableName, foreignKey)] = foreignKeyProperty;
+                
                 GeneratorHelper.Warn($"\"{foreignKey}\" in table \"{tableName}\" is a foreign key which references \"{referencedId}\" from table \"{referencedTable}\"", "SQL ");
                 continue;
             }
@@ -128,6 +188,7 @@ public class SQLParser
             table.Properties = ParseColumns(definition, table.DatabaseName);
             tables.Add(table);
         }
+        AdjustCardinality(tables);
 
         return tables;
     }
@@ -167,4 +228,8 @@ public class Property
 
     //Misc.
     public bool IsDtoProperty { get; set; } = true;
+    public bool IsChangeableByDto { get; set; } = true; //If false will not show up in create & update dto even if it is a dto property
+
+    public bool IsForeignKey { get; set; }
+    public SQLParser.ForeignKeyReference? ForeignKeyReference { get; set; } = null;
 }

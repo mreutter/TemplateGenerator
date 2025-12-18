@@ -9,6 +9,7 @@
     "DTOFolderName": "DTO",
     "ModelFolderName": "Model",
     "RepositoryFolderName": "Repository",
+    "AbtractFolderName": "Abstract",
 
     "DtoSuffix": "Dto",
     "ModelSuffix": "",

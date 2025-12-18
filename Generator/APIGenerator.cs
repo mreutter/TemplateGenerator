@@ -129,7 +129,7 @@ public class APIGenerator
             sections: new Dictionary<string, bool>
             {
                 {"useAuthorisation", _g.config.UseAuthorisation},
-                {"comment", true}, //Use Comment?
+                {"comment", _g.config.UseComments}, //Use Comment?
                 {"getById", table.UseGetById},
                 {"getAll", table.UseGetAll},
                 {"add", table.UseAdd},

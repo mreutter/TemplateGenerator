@@ -243,10 +243,10 @@ public class GeneratorHelper
         Spectre.Console.AnsiConsole.Markup($"[{color}]{message}\n[/]");
     }
 
-    public static void Error(string message, bool fatalError = true)
+    public static void Error(string message, bool fatalError = true, string prefix = "")
     {
         string errorModifer = fatalError ? "FATAL " : "";
-        WriteLine($"{errorModifer}ERROR: {message}", _errorColor);
+        WriteLine($"{errorModifer}{prefix}ERROR: {message}", _errorColor);
         if(fatalError)
         {
             Info("Cancelling generation process.");

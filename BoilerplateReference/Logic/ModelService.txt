@@ -18,7 +18,7 @@ public class $serviceName# : I$serviceName#
     {
         return new $dtoName#
         {
-$?*conversion#
+$?*toDtoConversion#
         };
     }
 
@@ -26,7 +26,7 @@ $?*conversion#
     {
         return new $modelName#
         {
-$?*conversion#
+$?*toModelConversion#
         };
     }
 !¬$?getById#
@@ -93,6 +93,10 @@ $?delete={
     }
 }#
 
-$?*conversion={
+$?*toDtoConversion={
+        $%property# = $varModelName#.$%property#,
+}#
+
+$?*toModelConversion={
         $%property# = $varModelName#.$%property#,
 }#

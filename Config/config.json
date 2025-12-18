@@ -1,23 +1,26 @@
 {
     "Directory": "C:/Users/reuttem1/Desktop/Templates/",
 
-    "DbName": "Schulnetz",
+    "DbName": "SchulnetzDB",
     "DbHost": "localhost",
     "DbUser": "root",
     "DbPassword": "Init1234",
   
+    "UseAbstractFolder":  true,
+    "UseSeperatedDTOFolders":  true,
+
     "InferType": true,
-    "UseForeignKey": false,
+    "UseForeignKey": true,
 
     "UseControllerName": true,
-
-    "UseAuthentification": true,
-    "UseAuthorisation": false,
-    "UseShared": false,
+    "UseComments":  true,
+    "UseShared": true,
     "UseAsync": false,
 
     "CORSAllowIP": "",
 
+    "UseAuthentification": true,
+    "UseAuthorisation": false,
     "AuthType": "Person",
     "AuthIdentifer": "Email",
     "AuthDbSetName": "implementTeacher / VicePrincipal either or",

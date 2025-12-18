@@ -1,5 +1,4 @@
-﻿using Spectre.Console;
-using System.Text;
+﻿using System.Text;
 
 namespace BackendTemplateCreator.Generator;
 public class LogicGenerator
@@ -69,7 +68,7 @@ public class LogicGenerator
         //Interface
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "Service\\",
+            _targetDirectory + "Service\\" + (_g.config.UseAbstractFolder ? _g.names.AbtractFolderName+"\\" : ""),
             "IModelService.txt",
             $"I{_g.serviceNames[tIndex]}.cs",
             parameters: new Dictionary<string, string>
@@ -82,11 +81,11 @@ public class LogicGenerator
             },
             sections: new Dictionary<string, bool>
             {
-                { "commentGetById", true },
-                { "commentGetAll", true },
-                { "commentAdd", true },
-                { "commentUpdate", true },
-                { "commentDelete", true },
+                { "commentGetById", _g.config.UseComments },
+                { "commentGetAll", _g.config.UseComments },
+                { "commentAdd", _g.config.UseComments },
+                { "commentUpdate", _g.config.UseComments },
+                { "commentDelete", _g.config.UseComments },
 
                 { "getById", table.UseGetById },
                 { "getAll", table.UseGetAll },
@@ -96,11 +95,13 @@ public class LogicGenerator
             }
         );
         //Service
-        List<Dictionary<string, string>> conversionLines = new List<Dictionary<string, string>>();
+        List<Dictionary<string, string>> dtoConversionLines = new();
+        List<Dictionary<string, string>> modelConversionLines = new();
         for (int i = 0; i < table.Properties.Count; i++)
         {
-            if (!table.Properties[i].IsDtoProperty) continue;
-            conversionLines.Add(new Dictionary<string, string> { { "property", table.Properties[i].ModelName } });
+            if (table.Properties[i].IsDtoProperty) dtoConversionLines.Add(new Dictionary<string, string> { { "property", table.Properties[i].ModelName } });
+
+            if (table.Properties[i].IsDtoProperty && table.Properties[i].IsChangeableByDto) modelConversionLines.Add(new Dictionary<string, string> { { "property", table.Properties[i].ModelName } });
         }
 
         GeneratorHelper.TemplateReplacer(
@@ -121,7 +122,7 @@ public class LogicGenerator
             },
             sections: new Dictionary<string, bool>
             {
-                { "comment", true },
+                { "comment", _g.config.UseComments },
 
                 { "getById", table.UseGetById },
                 { "getAll", table.UseGetAll },
@@ -130,7 +131,8 @@ public class LogicGenerator
                 { "delete", table.UseDelete },
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"conversion", conversionLines.ToArray()}
+                {"toDtoConversion", dtoConversionLines.ToArray()},
+                {"toModelConversion", modelConversionLines.ToArray() }
             }
         );
     }
@@ -160,29 +162,37 @@ public class LogicGenerator
 
             if (col.IsPrimaryKey)
                 dataAnnotationsSB.AppendLine($"    [Key]");
-            // Also automatically convert fk 1:n (how to detect) relationships into collections
+            
+
 
             dataAnnotations[i] = dataAnnotationsSB.ToString();
             dataAnnotationsSB.Clear();
         }
 
         List<Dictionary<string, string>> properties = new List<Dictionary<string, string>>();
+        List<Dictionary<string, string>> modifyProperties = new List<Dictionary<string, string>>();
         for (int i = 0; i < table.Properties.Count; i++)
         {
             Property property = table.Properties[i];
-            if (!property.IsDtoProperty) continue;
-            properties.Add(new Dictionary<string, string>
+            var prop = new Dictionary<string, string>
             {
                 { "dataAnnotations", dataAnnotations[i] },
                 { "type", property.CSharpType },
                 { "identifier", property.ModelName }
-            });
+            };
+            if (property.IsDtoProperty) properties.Add(prop);
+            if (property.IsDtoProperty && property.IsChangeableByDto) modifyProperties.Add(prop);
         }
+
+
         Dictionary<string,string>[] propertiesArray = properties.ToArray();
+        Dictionary<string, string>[] modifyPropertiesArray = modifyProperties.ToArray();
+
+        string addedPath = (_g.config.UseSeperatedDTOFolders ? _g.modelNames[tIndex] + "\\" : "");
 
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "DTO\\",
+            _targetDirectory + "DTO\\" + addedPath,
             "ModelDto.txt",
             $"{_g.dtoNames[tIndex]}.cs",
             parameters: new Dictionary<string, string>
@@ -197,33 +207,33 @@ public class LogicGenerator
 
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "DTO\\",
+            _targetDirectory + "DTO\\" + addedPath,
             "ModelDto.txt",
             $"Create{_g.dtoNames[tIndex]}.cs",
             parameters: new Dictionary<string, string>
             {
                 {"logic", _g.logicPartition},
                 {"dtoName", "Create"+_g.dtoNames[tIndex]},
-                {"properties", properties.ToString()}
+                {"properties", modifyProperties.ToString()}
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"properties", propertiesArray}
+                {"properties", modifyPropertiesArray}
             }
         );
 
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "DTO\\",
+            _targetDirectory + "DTO\\" + addedPath,
             "ModelDto.txt",
             $"Update{_g.dtoNames[tIndex]}.cs",
             parameters: new Dictionary<string, string>
             {
                 {"logic", _g.logicPartition},
                 {"dtoName", "Update"+_g.dtoNames[tIndex]},
-                {"properties", properties.ToString()}
+                {"properties", modifyProperties.ToString()}
             }, multipleSectionParameters: new Dictionary<string, Dictionary<string, string>[]>
             {
-                {"properties", propertiesArray}
+                {"properties", modifyPropertiesArray}
             }
         );
     }
@@ -232,7 +242,7 @@ public class LogicGenerator
     {
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "Service\\",
+            _targetDirectory + "Service\\" + (_g.config.UseAbstractFolder ? _g.names.AbtractFolderName+"\\" : ""),
             "IAuthService.txt",
             "IAuthService.cs",
             parameters: new Dictionary<string, string>
@@ -263,7 +273,7 @@ public class LogicGenerator
     {
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "DTO\\",
+            _targetDirectory + "DTO\\" + (_g.config.UseSeperatedDTOFolders ? "Auth\\" : ""),
             "LoginRequestDto.txt",
             "LoginRequestDto.cs",
             parameters: new Dictionary<string, string>
@@ -274,7 +284,7 @@ public class LogicGenerator
         );
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "DTO\\",
+            _targetDirectory + "DTO\\" + (_g.config.UseSeperatedDTOFolders ? "Auth\\" : ""),
             "LoginResponseDto.txt",
             "LoginResponseDto.cs",
             parameters: new Dictionary<string, string>

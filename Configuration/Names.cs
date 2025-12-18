@@ -14,6 +14,7 @@ public class Names
     public string DTOFolderName { get; set; }
     public string ModelFolderName { get; set; }
     public string RepositoryFolderName { get; set; }
+    public string AbtractFolderName { get; set; }
 
     //Conventions
     public string DtoSuffix { get; set; }

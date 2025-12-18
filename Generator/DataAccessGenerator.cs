@@ -93,6 +93,15 @@ public class DataAccessGenerator
         for (int i = 0; i < table.Properties.Count; i++)
         {
             Property col = table.Properties[i];
+            /*if (col.IsForeignKey)
+            {
+                string type = col.ForeignKeyReference.Cardinality == SQLParser.CardinalityEnum.OneToMany ? $"ICollection<{col.ModelName}>" : col.ModelName;
+                dataAnnotationsSB.Append($"    public "+type+" "+col.ModelName+" { get; set; }");
+                dataAnnotationsSB.Append('\n');
+
+                if(col.ForeignKeyReference.ReferencedKey != col.ModelName)
+                    dataAnnotationsSB.Append($"    [ForeignKey(\"{col.ForeignKeyReference.ReferencedTable}\")]");
+            }*/
 
             if (col.DatabaseName != col.ModelName) dataAnnotationsSB.AppendLine($"    [Column(\"{col.DatabaseName}\")]");
 
@@ -110,7 +119,8 @@ public class DataAccessGenerator
 
             if (col.IsPrimaryKey)
                 dataAnnotationsSB.AppendLine($"    [Key]");
-            // Also automatically convert fk 1:n (how to detect) relationships into collections
+
+            //How to add foreign keys (What if model name mismatch?) -> Use ForeignKey Dataannotation
 
             dataAnnotations[i] = dataAnnotationsSB.ToString();
             dataAnnotationsSB.Clear();
@@ -155,7 +165,7 @@ public class DataAccessGenerator
         //Interface
         GeneratorHelper.TemplateReplacer(
             _templateDirectory,
-            _targetDirectory + "Repository\\",
+            _targetDirectory + "Repository\\" + (_g.config.UseAbstractFolder ? _g.names.AbtractFolderName + "\\" : ""),
             "IModelRepository.txt",
             $"I{_g.repositoryNames[tIndex]}.cs",
             parameters: new Dictionary<string, string>
@@ -166,11 +176,11 @@ public class DataAccessGenerator
             },
             sections: new Dictionary<string, bool>
             {
-                {"getByIdComment", true },
-                {"getAllComment", true },
-                {"addComment", true },
-                {"updateComment", true },
-                {"deleteComment", true },
+                {"getByIdComment", _g.config.UseComments },
+                {"getAllComment", _g.config.UseComments },
+                {"addComment", _g.config.UseComments },
+                {"updateComment", _g.config.UseComments },
+                {"deleteComment", _g.config.UseComments },
 
                 {"getById", table.UseGetById},
                 {"getAll", table.UseGetAll},
@@ -196,7 +206,7 @@ public class DataAccessGenerator
             },
             sections: new Dictionary<string, bool>
             {
-                {"comment", true },
+                {"comment", _g.config.UseComments },
                 {"getById", table.UseGetById},
                 {"getAll", table.UseGetAll},
                 {"add", table.UseAdd},
